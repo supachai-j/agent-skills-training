@@ -1,0 +1,773 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Agent Skills 101 — Self-paced Course (EN)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #0f1116;
+    --panel: #181b22;
+    --panel-2: #1f242d;
+    --accent: #d97757;
+    --accent-2: #5d8aa8;
+    --muted: #8a93a3;
+    --text: #e8ecf2;
+    --border: rgba(255,255,255,0.08);
+    --code-bg: #11141a;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.65;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  code { font-family: "JetBrains Mono", "Menlo", monospace; font-size: 0.9em;
+    background: rgba(217,119,87,0.12); padding: 1px 6px; border-radius: 4px; }
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    padding: 16px 18px;
+    border-radius: 8px;
+    overflow-x: auto;
+    font-size: 0.85em;
+    line-height: 1.55;
+  }
+  pre code { background: none; padding: 0; font-size: inherit; color: #d8e0eb; }
+
+  /* Layout: sidebar + main */
+  .layout { display: grid; grid-template-columns: 280px 1fr; max-width: 1280px; margin: 0 auto; gap: 0; }
+
+  aside.toc {
+    position: sticky; top: 0; align-self: start;
+    height: 100vh; overflow-y: auto;
+    border-right: 1px solid var(--border);
+    padding: 28px 18px 28px 24px;
+    background: var(--bg);
+  }
+  aside.toc .brand {
+    font-weight: 700; font-size: 0.95em;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 6px;
+  }
+  aside.toc .home-link { display: inline-block; color: var(--muted); font-size: 0.85em; margin-bottom: 26px; }
+  aside.toc h2 { font-size: 0.7em; text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted); margin: 16px 0 8px; }
+  aside.toc ol { list-style: none; padding: 0; margin: 0; counter-reset: step; }
+  aside.toc ol li { counter-increment: step; margin: 0; }
+  aside.toc ol li a {
+    display: block; color: var(--text); padding: 6px 10px;
+    border-radius: 6px; font-size: 0.92em; line-height: 1.4;
+  }
+  aside.toc ol li a::before {
+    content: counter(step) ". ";
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+  aside.toc ol li a:hover { background: var(--panel); text-decoration: none; }
+  aside.toc .meta { font-size: 0.78em; color: var(--muted); margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border); }
+  aside.toc .meta a { color: var(--accent); }
+
+  main {
+    padding: 56px 56px 96px;
+    max-width: 820px;
+  }
+  main header.page-head { margin-bottom: 40px; padding-bottom: 24px; border-bottom: 1px solid var(--border); }
+  main header.page-head .pill {
+    display: inline-block; padding: 4px 12px; border-radius: 999px;
+    background: rgba(217,119,87,0.15); color: var(--accent);
+    font-size: 0.72em; letter-spacing: 0.12em; text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  main header.page-head h1 { font-size: 2.4rem; font-weight: 700; margin: 0; letter-spacing: -0.02em; }
+  main header.page-head .lede { color: var(--muted); margin: 14px 0 0; font-size: 1.05em; }
+  main header.page-head .quick-links { margin-top: 18px; font-size: 0.92em; }
+  main header.page-head .quick-links a { margin-right: 16px; }
+
+  section.module {
+    margin: 56px 0;
+    padding-top: 12px;
+    scroll-margin-top: 16px;
+  }
+  section.module .num {
+    color: var(--muted);
+    font-size: 0.8em;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+  section.module h2 {
+    font-size: 1.7rem;
+    margin: 6px 0 14px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+  section.module .summary {
+    color: var(--muted);
+    font-size: 1.02em;
+    margin: 0 0 22px;
+    padding-left: 14px;
+    border-left: 2px solid var(--accent);
+  }
+  section.module h3 { font-size: 1.18rem; margin: 32px 0 10px; color: var(--accent-2); }
+  section.module h4 { font-size: 1rem; margin: 22px 0 8px; color: var(--text); }
+  section.module ul, section.module ol { padding-left: 22px; }
+  section.module li { margin: 6px 0; }
+
+  .callout {
+    background: rgba(93,138,168,0.08);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent-2);
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin: 24px 0;
+  }
+  .callout.takeaway { border-left-color: var(--accent); background: rgba(217,119,87,0.06); }
+  .callout.lab { border-left-color: #6dba88; background: rgba(109,186,136,0.06); }
+  .callout h4 { margin: 0 0 8px; color: var(--text); font-size: 0.95em; text-transform: uppercase; letter-spacing: 0.08em; }
+  .callout.takeaway h4 { color: var(--accent); }
+  .callout.lab h4 { color: #6dba88; }
+  .callout p { margin: 6px 0; }
+
+  table {
+    width: 100%; border-collapse: collapse; margin: 18px 0;
+    font-size: 0.92em;
+  }
+  th, td { padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { color: var(--accent); font-weight: 600; font-size: 0.85em; text-transform: uppercase; letter-spacing: 0.06em; }
+  td code { font-size: 0.85em; }
+
+  blockquote {
+    margin: 18px 0;
+    padding: 0 0 0 18px;
+    color: var(--muted);
+    border-left: 3px solid var(--accent);
+    font-style: italic;
+  }
+
+  .footer-nav {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: 64px; padding-top: 24px; border-top: 1px solid var(--border);
+    font-size: 0.9em;
+  }
+
+  /* Mobile */
+  @media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; }
+    aside.toc { position: static; height: auto; border-right: none; border-bottom: 1px solid var(--border); padding: 20px 24px; }
+    main { padding: 32px 24px 64px; }
+  }
+</style>
+</head>
+<body>
+<div class="layout">
+
+<aside class="toc">
+  <div class="brand">Agent Skills 101</div>
+  <a class="home-link" href="index.html">← Back to portal</a>
+
+  <h2>Modules</h2>
+  <ol>
+    <li><a href="#m1">Welcome &amp; what you'll learn</a></li>
+    <li><a href="#m2">What is an Agent Skill?</a></li>
+    <li><a href="#m3">Anatomy: the SKILL.md contract</a></li>
+    <li><a href="#m4">Progressive disclosure</a></li>
+    <li><a href="#m5">An open standard, not just an Anthropic feature</a></li>
+    <li><a href="#m6">Where Skills run</a></li>
+    <li><a href="#m7">Skills vs MCP vs Subagents</a></li>
+    <li><a href="#m8">Authoring best practices</a></li>
+    <li><a href="#m9">Description optimization (lab)</a></li>
+    <li><a href="#m10">Implementing a Skills client</a></li>
+    <li><a href="#m11">Security &amp; rollout playbook</a></li>
+    <li><a href="#m12">Cheatsheet &amp; resources</a></li>
+  </ol>
+
+  <div class="meta">
+    Slide deck: <a href="../slides/training-en.html">EN</a> · <a href="../slides/training-th.html">TH</a><br>
+    Standard: <a href="https://agentskills.io">agentskills.io</a><br>
+    Wiki: <a href="../index.md">browse</a>
+  </div>
+</aside>
+
+<main>
+
+<header class="page-head">
+  <span class="pill">Self-paced course · English</span>
+  <h1>Agent Skills — Technical Deep Dive</h1>
+  <p class="lede">A 12-module training on the Agent Skills open standard — what they are, how they load, and how to author, test, secure, and roll them out across a team.</p>
+  <div class="quick-links">
+    <a href="#m1">Start reading →</a>
+    <a href="../slides/training-en.html">Slides</a>
+    <a href="course-th.html">ภาษาไทย</a>
+  </div>
+</header>
+
+<!-- Module 1 -->
+<section id="m1" class="module">
+  <div class="num">Module 01</div>
+  <h2>Welcome &amp; what you'll learn</h2>
+  <p class="summary">A short orientation: why skills exist, what changes when you adopt them, and the path through this course.</p>
+
+  <p>Modern coding agents are good at general tasks but routinely lack the <em>specific</em> context they need to do real work reliably — your team's commit conventions, the precise way you fill out a PDF form, the migration runbook your senior engineer keeps in a Notion page. <strong>Agent Skills</strong> are an open format for capturing that procedural knowledge as a folder of files (one <code>SKILL.md</code> plus optional siblings) that any compatible agent can discover and load on demand.</p>
+
+  <p>Once a skill is written, you stop pasting the same instructions every session. Once it's in source control, the whole team gets it. Once it's in <code>.agents/skills/</code>, every conformant agent — Claude Code, Copilot, Cursor, Codex, Gemini CLI, and dozens more — can use it without modification.</p>
+
+  <h3>What this course covers</h3>
+  <ul>
+    <li>The technical anatomy of a skill — frontmatter, body, sibling files, validation rules.</li>
+    <li>Progressive disclosure — why skills don't drown your context window and how to author for it.</li>
+    <li>The open standard at <code>agentskills.io</code> and the cross-client convention.</li>
+    <li>The decision framework for Skills vs MCP vs Subagents (you'll need all three).</li>
+    <li>Authoring best practices, with concrete worked examples.</li>
+    <li>A short lab on description optimization — the single most important quality dial.</li>
+    <li>How to implement Skills support in your own client agent.</li>
+    <li>Security model, rollout playbook, and a cheatsheet you can keep.</li>
+  </ul>
+
+  <div class="callout">
+    <h4>Time</h4>
+    <p>~45 minutes to read, ~90 minutes if you do the labs.</p>
+  </div>
+</section>
+
+<!-- Module 2 -->
+<section id="m2" class="module">
+  <div class="num">Module 02</div>
+  <h2>What is an Agent Skill?</h2>
+  <p class="summary">A precise, vendor-neutral definition.</p>
+
+  <p>An <strong>Agent Skill</strong> is an organised folder of instructions, scripts, and resources that an agent can <em>discover and load dynamically</em> to perform better on a specific task. The contract has three parts:</p>
+
+  <ol>
+    <li><strong>A folder</strong> whose name is the skill's name.</li>
+    <li><strong>A <code>SKILL.md</code> file</strong> at the folder root, containing YAML frontmatter and markdown.</li>
+    <li><strong>Optional sibling content</strong> in canonical directories: <code>scripts/</code>, <code>references/</code>, <code>assets/</code>.</li>
+  </ol>
+
+  <pre><code>my-skill/
+├── SKILL.md          # required — entrypoint
+├── scripts/          # optional — executable code
+├── references/       # optional — documentation
+├── assets/           # optional — templates, data
+└── ...</code></pre>
+
+  <p>The standard is intentionally minimal. Two required fields — <code>name</code> and <code>description</code> — plus a markdown body. Everything else is optional or platform-specific.</p>
+
+  <blockquote>"Building a skill for an agent is like putting together an onboarding guide for a new hire." — Anthropic Engineering</blockquote>
+
+  <p>The analogy holds. A new hire doesn't need to memorise the entire wiki on day one; they need a table of contents and pointers to where the deep material lives. An agent works the same way — it doesn't read every skill end-to-end, only the ones it judges relevant to the current task.</p>
+
+  <div class="callout takeaway">
+    <h4>Takeaway</h4>
+    <p>A skill is a <em>folder</em>, not a snippet. The folder layout is what makes progressive disclosure possible.</p>
+  </div>
+</section>
+
+<!-- Module 3 -->
+<section id="m3" class="module">
+  <div class="num">Module 03</div>
+  <h2>Anatomy: the <code>SKILL.md</code> contract</h2>
+  <p class="summary">Frontmatter fields, validation rules, and the body.</p>
+
+  <p>Every <code>SKILL.md</code> opens with YAML frontmatter between two <code>---</code> delimiters:</p>
+
+  <pre><code>---
+name: pdf-processing
+description: Extract text and tables from PDF files, fill forms, merge documents. Use when working with PDF files or when the user mentions PDFs, forms, or document extraction.
+---
+
+# PDF Processing
+...markdown body...</code></pre>
+
+  <h3>Required fields (open standard)</h3>
+  <table>
+    <thead><tr><th>Field</th><th>Constraint</th></tr></thead>
+    <tbody>
+      <tr><td><code>name</code></td><td>1-64 chars · lowercase letters/digits/hyphens · no leading/trailing <code>-</code> · no consecutive <code>--</code> · <strong>must match parent directory name</strong></td></tr>
+      <tr><td><code>description</code></td><td>1-1024 chars · should describe both <em>what</em> the skill does and <em>when</em> to use it</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Optional fields (open standard)</h3>
+  <table>
+    <thead><tr><th>Field</th><th>Purpose</th></tr></thead>
+    <tbody>
+      <tr><td><code>license</code></td><td>License name or filename of bundled licence text.</td></tr>
+      <tr><td><code>compatibility</code></td><td>≤500 chars. Note env requirements: <code>Requires Python 3.14+ and uv</code>.</td></tr>
+      <tr><td><code>metadata</code></td><td>Arbitrary string→string map for client-defined fields (e.g. version, author).</td></tr>
+      <tr><td><code>allowed-tools</code></td><td>Space-separated list of pre-approved tools. <em>Experimental.</em></td></tr>
+    </tbody>
+  </table>
+
+  <h3>Claude Code-specific extras</h3>
+  <p>Claude Code adds fields that only apply when the skill runs inside Claude Code: <code>when_to_use</code>, <code>argument-hint</code>, <code>arguments</code>, <code>disable-model-invocation</code>, <code>user-invocable</code>, <code>model</code>, <code>effort</code>, <code>context: fork</code>, <code>agent</code>, <code>hooks</code>, <code>paths</code>, <code>shell</code>. Use them for client-specific behaviour; stick to the open subset for cross-client portability.</p>
+
+  <h3>The body</h3>
+  <p>Whatever helps the agent perform the task. Step-by-step instructions, examples, edge cases. There are no format restrictions. Recommended cap: <strong>500 lines</strong> — beyond that, split into sibling reference files.</p>
+
+  <div class="callout takeaway">
+    <h4>Takeaway</h4>
+    <p>The standard is small on purpose. Master the required fields, then add optional fields only when they earn it.</p>
+  </div>
+</section>
+
+<!-- Module 4 -->
+<section id="m4" class="module">
+  <div class="num">Module 04</div>
+  <h2>Progressive disclosure</h2>
+  <p class="summary">The single design principle that makes skills scale.</p>
+
+  <p>If every installed skill loaded its entire body into context at startup, ten skills would burn 50,000 tokens before the user typed anything. Progressive disclosure is the staged-loading model that prevents this. Skills load in <strong>three tiers</strong>:</p>
+
+  <table>
+    <thead><tr><th>Tier</th><th>What loads</th><th>When</th><th>Token cost</th></tr></thead>
+    <tbody>
+      <tr><td><strong>L1 — Metadata</strong></td><td><code>name</code> + <code>description</code></td><td>Always (session start)</td><td>~100 tokens / skill</td></tr>
+      <tr><td><strong>L2 — Instructions</strong></td><td>SKILL.md body</td><td>When the agent decides the skill is relevant</td><td>&lt; 5,000 tokens (recommended)</td></tr>
+      <tr><td><strong>L3+ — Resources</strong></td><td>Files under <code>scripts/</code>, <code>references/</code>, <code>assets/</code></td><td>On demand via bash / file-read</td><td>Effectively unbounded</td></tr>
+    </tbody>
+  </table>
+
+  <p>Tier 3 is where the magic compounds. A reference file like <code>references/finance.md</code> consumes <em>zero</em> tokens until the agent opens it. Scripts are even better: their source code never enters context — only their <em>output</em> does. A 2,000-line Python script that emits "OK" costs about three tokens after running.</p>
+
+  <h3>Authoring implications</h3>
+  <ul>
+    <li>Keep <code>SKILL.md</code> body under <strong>500 lines</strong>. Larger content goes into sibling files.</li>
+    <li>Reference siblings <strong>one level deep</strong> from <code>SKILL.md</code>. Agents may partial-read transitively-linked files (e.g. <code>head -100</code>), missing important content past line 100.</li>
+    <li>For reference files longer than ~100 lines, include a <strong>Contents</strong> block at the top. The agent can then jump to the right section.</li>
+    <li>For long-running deterministic operations, prefer a <strong>script</strong> the agent runs over inline instructions the agent has to follow exactly.</li>
+  </ul>
+
+  <h3>Pattern 1 — guide with references</h3>
+<pre><code># PDF Processing
+
+## Quick start
+[short inline guidance]
+
+## Advanced features
+- Form filling: see [FORMS.md](FORMS.md)
+- Reference: see [REFERENCE.md](REFERENCE.md)
+- Examples: see [EXAMPLES.md](EXAMPLES.md)</code></pre>
+
+  <h3>Pattern 2 — domain split</h3>
+  <p>For BigQuery-style skills with multiple datasets, split references by domain so the agent only loads what's asked about:</p>
+<pre><code>bigquery-skill/
+├── SKILL.md
+└── reference/
+    ├── finance.md   # revenue, billing
+    ├── sales.md     # pipeline, opportunities
+    ├── product.md   # adoption, usage
+    └── marketing.md # attribution</code></pre>
+
+  <div class="callout takeaway">
+    <h4>Takeaway</h4>
+    <p>You can install dozens or hundreds of skills if each one is structured for progressive disclosure. The bottleneck is the <em>description</em>, not the body.</p>
+  </div>
+</section>
+
+<!-- Module 5 -->
+<section id="m5" class="module">
+  <div class="num">Module 05</div>
+  <h2>An open standard, not just an Anthropic feature</h2>
+  <p class="summary">Why your skills are portable, and where the canonical spec lives.</p>
+
+  <p>Anthropic invented the SKILL.md format and then released it as an open standard at <a href="https://agentskills.io">agentskills.io</a>, governed via a public <a href="https://github.com/agentskills/agentskills">GitHub repository</a>. The standard defines the format; clients implement loading and execution however suits them.</p>
+
+  <p>As of May 2026, the format is supported by an unusually broad cross-vendor ecosystem:</p>
+
+  <p style="color: var(--muted); font-size: 0.92em;">
+    Claude Code · Claude.ai · GitHub Copilot · VS Code · OpenAI Codex · Cursor · Gemini CLI · OpenCode · OpenHands · Goose (Block) · Letta · Roo Code · Mistral Vibe · Snowflake Cortex Code · Databricks Genie · Spring AI · Laravel Boost · Kiro · Factory · Junie (JetBrains) · Amp · Mux · Ona · Workshop · Trae (ByteDance) · Piebald · Pi · Emdash · Qodo · VT Code · Command Code · Agentman · Firebender · Google AI Edge Gallery · nanobot · fast-agent · Autohand
+  </p>
+
+  <p>One <code>SKILL.md</code>, written once, runs unchanged in any of those — provided you stay within the open subset of frontmatter fields and don't lean on client-specific extras. That's the whole pitch of an open spec: write once, reuse everywhere.</p>
+
+  <h3>The cross-client convention: <code>.agents/skills/</code></h3>
+  <p>The standard <em>doesn't</em> mandate a fixed install location, but the ecosystem has converged on <strong><code>.agents/skills/</code></strong> as the cross-client path. Conformant clients scan it in addition to their own native location.</p>
+
+  <table>
+    <thead><tr><th>Scope</th><th>Native (per-client)</th><th>Cross-client</th></tr></thead>
+    <tbody>
+      <tr><td>Project</td><td><code>&lt;repo&gt;/.&lt;client&gt;/skills/</code></td><td><code>&lt;repo&gt;/.agents/skills/</code></td></tr>
+      <tr><td>User</td><td><code>~/.&lt;client&gt;/skills/</code></td><td><code>~/.agents/skills/</code></td></tr>
+    </tbody>
+  </table>
+
+  <p>Universal precedence rule: <strong>project-level overrides user-level</strong>. Many newer clients also pragmatically scan <code>.claude/skills/</code> because so many existing skills already live there.</p>
+
+  <div class="callout takeaway">
+    <h4>Takeaway</h4>
+    <p>Place team-shared skills in <code>&lt;repo&gt;/.agents/skills/</code>. Personal ones in <code>~/.agents/skills/</code>. Reach for client-specific paths only when you genuinely need client-specific frontmatter.</p>
+  </div>
+</section>
+
+<!-- Module 6 -->
+<section id="m6" class="module">
+  <div class="num">Module 06</div>
+  <h2>Where Skills run</h2>
+  <p class="summary">Surface-by-surface comparison of capabilities, sharing, and runtime constraints.</p>
+
+  <table>
+    <thead><tr><th>Surface</th><th>Pre-built</th><th>Custom</th><th>Sharing scope</th><th>Network</th></tr></thead>
+    <tbody>
+      <tr><td>Claude API</td><td>pptx · xlsx · docx · pdf</td><td>via <code>/v1/skills</code></td><td>Workspace-wide</td><td><strong>None</strong></td></tr>
+      <tr><td>Claude.ai</td><td>built-in (invisible)</td><td>ZIP upload</td><td>Per user</td><td>Policy-controlled</td></tr>
+      <tr><td>Claude Code</td><td>—</td><td>Filesystem</td><td>Plugin / project / personal</td><td><strong>Full</strong></td></tr>
+    </tbody>
+  </table>
+
+  <h3>Claude API specifics</h3>
+  <p>Skills run inside the API's code-execution container. You need three beta headers:</p>
+  <pre><code>anthropic-beta: code-execution-2025-08-25
+anthropic-beta: skills-2025-10-02
+anthropic-beta: files-api-2025-04-14</code></pre>
+  <p>Reference a skill by <code>skill_id</code> in the <code>container</code> parameter alongside the code-execution tool. The sandbox has <strong>no network</strong> and <strong>no runtime <code>pip install</code></strong> — only pre-installed packages. Skills are also <strong>not</strong> covered by Zero-Data-Retention today.</p>
+
+  <h3>Claude Code specifics</h3>
+  <p>Locations and precedence:</p>
+  <table>
+    <thead><tr><th>Where</th><th>Path</th><th>Scope</th></tr></thead>
+    <tbody>
+      <tr><td>Enterprise</td><td>managed settings</td><td>org-wide</td></tr>
+      <tr><td>Personal</td><td><code>~/.claude/skills/&lt;name&gt;/SKILL.md</code></td><td>all your projects</td></tr>
+      <tr><td>Project</td><td><code>.claude/skills/&lt;name&gt;/SKILL.md</code></td><td>this repo</td></tr>
+      <tr><td>Plugin</td><td><code>&lt;plugin&gt;/skills/&lt;name&gt;/SKILL.md</code></td><td>where plugin enabled</td></tr>
+    </tbody>
+  </table>
+  <p>Precedence: <strong>enterprise &gt; personal &gt; project</strong>. Plugin skills are namespaced <code>plugin:skill</code> and don't conflict.</p>
+
+  <h3>Claude Code superpowers</h3>
+  <ul>
+    <li><code>!`git diff HEAD`</code> — <strong>dynamic context injection</strong>: a shell command runs <em>before</em> Claude sees the skill, and its output is inlined.</li>
+    <li><code>context: fork</code> — runs the skill in a forked subagent with its own tool set and isolated context.</li>
+    <li><code>allowed-tools</code> — pre-approves tools while the skill is active, skipping per-call confirmation.</li>
+    <li><code>disable-model-invocation: true</code> — only the user can invoke the skill (use for <code>/deploy</code>, <code>/send-slack</code>).</li>
+    <li><code>${CLAUDE_SKILL_DIR}</code> — resolves to the skill's directory, so bundled scripts work regardless of the working directory.</li>
+  </ul>
+
+  <div class="callout">
+    <h4>Cross-surface note</h4>
+    <p>Custom skills do <strong>not</strong> sync across surfaces. Upload separately to API, claude.ai, and Claude Code. The portable thing about skills is the format, not the deployment.</p>
+  </div>
+</section>
+
+<!-- Module 7 -->
+<section id="m7" class="module">
+  <div class="num">Module 07</div>
+  <h2>Skills vs MCP vs Subagents</h2>
+  <p class="summary">Three different questions, not three competing answers.</p>
+
+  <p>Newcomers usually try to pick one. Production setups use all three. The trick is knowing what each is good for.</p>
+
+  <table>
+    <thead><tr><th>Feature</th><th>Skills</th><th>Prompts</th><th>Projects</th><th>Subagents</th><th>MCP</th></tr></thead>
+    <tbody>
+      <tr><td>Purpose</td><td>Procedural know-how</td><td>Per-turn instructions</td><td>Background knowledge</td><td>Task delegation</td><td>External tool connectivity</td></tr>
+      <tr><td>Persistence</td><td>Across conversations</td><td>One conversation</td><td>Within project</td><td>Across sessions</td><td>Continuous</td></tr>
+      <tr><td>Loading</td><td>Dynamic, on demand</td><td>Each turn</td><td>Always in project</td><td>When invoked</td><td>Always available</td></tr>
+      <tr><td>Includes code</td><td>Yes</td><td>No</td><td>No</td><td>Yes</td><td>Yes</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Decision framework</h3>
+  <pre><code>Need Claude to know HOW to do X repeatably?     → Skill
+Need Claude to ACCESS an external system?        → MCP
+Need work done in ISOLATION with own context?    → Subagent</code></pre>
+
+  <h3>Composition (the powerful pattern)</h3>
+  <pre><code>main agent
+  └─ subagent: code-reviewer (own context, read-only tools)
+       └─ skill: review-conventions (loaded on demand)
+              └─ MCP: GitHub (fetches PR diff + comments)</code></pre>
+
+  <p>Each layer earns its existence. Subagents isolate context. Skills hold the know-how. MCP fetches the data. The interesting work happens at the interfaces between them.</p>
+
+  <div class="callout takeaway">
+    <h4>Takeaway</h4>
+    <p>Don't make this an either/or. The right answer is usually "skill plus MCP, optionally inside a subagent."</p>
+  </div>
+</section>
+
+<!-- Module 8 -->
+<section id="m8" class="module">
+  <div class="num">Module 08</div>
+  <h2>Authoring best practices</h2>
+  <p class="summary">Anthropic's official guidance, distilled.</p>
+
+  <h3>Four core principles</h3>
+  <ol>
+    <li><strong>Concise is key.</strong> The context window is a public good. Once SKILL.md loads, every token competes with conversation history.</li>
+    <li><strong>Assume Claude is smart.</strong> Only add what the model doesn't already know. Don't explain what a PDF is.</li>
+    <li><strong>Calibrate degrees of freedom.</strong> Match instruction tightness to task fragility. DB migrations need exact commands; code reviews need general direction.</li>
+    <li><strong>Test on every model</strong> the skill will run on (Haiku, Sonnet, Opus). What works for Opus may need more handholding on Haiku.</li>
+  </ol>
+
+  <h3>Naming</h3>
+  <p>Use <strong>gerund form</strong> when possible: <code>processing-pdfs</code>, <code>analyzing-spreadsheets</code>, <code>reviewing-pull-requests</code>. Avoid vague names — <code>helper</code>, <code>utils</code>, <code>tools</code>, <code>data</code> — they tell the agent nothing about <em>when</em> to reach for the skill.</p>
+
+  <h3>Description rules</h3>
+  <ul>
+    <li>Always third person. <em>"Processes Excel files…"</em>, not <em>"I can help…"</em> or <em>"You can use this to…"</em>.</li>
+    <li>Always include both <strong>what</strong> the skill does and <strong>when</strong> to use it.</li>
+    <li>Imperative phrasing for the trigger half: <em>"Use when the user…"</em>.</li>
+    <li>Err on the side of being pushy. List adjacent contexts: <em>"…even if they don't explicitly mention CSV or analysis."</em></li>
+  </ul>
+
+  <h3>Anti-patterns</h3>
+  <ul>
+    <li><strong>Windows-style paths</strong> (<code>scripts\helper.py</code>). Always use forward slashes.</li>
+    <li><strong>Voodoo constants</strong> — every magic number documented or it's a bug waiting to happen.</li>
+    <li><strong>"Punt-to-Claude" error handling</strong> — solve in the script, don't shove the problem back into the prompt.</li>
+    <li><strong>Three valid alternatives</strong> — give one default and an escape hatch.</li>
+    <li><strong>Time-sensitive instructions</strong> — push deprecated content into a "Legacy" section so it doesn't rot the live guidance.</li>
+  </ul>
+
+  <h3>Workflows</h3>
+  <p>For multi-step tasks, give the agent a checklist it can copy into its response and tick off as it goes. Pattern: <strong>plan → validate → execute</strong>. The validation step catches errors before they become destructive.</p>
+
+  <pre><code>## PDF form filling workflow
+
+Copy this checklist:
+- [ ] Step 1: Analyze the form (run analyze_form.py)
+- [ ] Step 2: Create field mapping (edit fields.json)
+- [ ] Step 3: Validate mapping (run validate_fields.py)
+- [ ] Step 4: Fill the form (run fill_form.py)
+- [ ] Step 5: Verify output (run verify_output.py)</code></pre>
+
+  <div class="callout takeaway">
+    <h4>Takeaway</h4>
+    <p>The two highest-leverage things you can fix in any skill are the <em>description</em> (does it activate at the right time?) and the <em>workflow</em> (does it make the task harder to mess up?). Everything else is secondary.</p>
+  </div>
+</section>
+
+<!-- Module 9 -->
+<section id="m9" class="module">
+  <div class="num">Module 09</div>
+  <h2>Description optimization (lab)</h2>
+  <p class="summary">A mini lab: optimize a skill's description like an ML model.</p>
+
+  <p>The <code>description</code> is the <strong>only</strong> field that decides whether a skill activates. An under-specified description means the skill never triggers; an over-broad one means it triggers when it shouldn't. agentskills.io documents a structured loop borrowed from ML evaluation practice.</p>
+
+  <h3>Step 1 — build a labeled query set</h3>
+  <p>Aim for 20 user-style queries, half should-trigger and half should-not.</p>
+  <pre><code>[
+  { "query": "I've got a spreadsheet in ~/data/q4_results.xlsx with revenue in col C and expenses in col D — can you add a profit margin column and highlight anything under 10%?", "should_trigger": true },
+  { "query": "whats the quickest way to convert this json file to yaml", "should_trigger": false }
+]</code></pre>
+
+  <p>Vary the should-trigger queries on phrasing (formal/casual/typos), explicitness (names the domain vs hides it), detail (terse vs context-heavy), and complexity (one-step vs multi-step).</p>
+
+  <p>For should-not queries, the most useful negatives are <strong>near-misses</strong> — queries that share keywords with your skill but actually need something different. "Write a fibonacci function" is a useless negative; "I need to update the formulas in my Excel budget spreadsheet" is a powerful one for a CSV-analysis skill, because the keywords overlap but the task is Excel editing, not CSV analysis.</p>
+
+  <h3>Step 2 — split train / validation</h3>
+  <p>Train ~60%, validation ~40%. Keep the split fixed so you're comparing iterations like-for-like. Both sets must contain a proportional mix of positives and negatives.</p>
+
+  <h3>Step 3 — measure trigger rate</h3>
+  <p>Models are non-deterministic. Run each query <strong>3 times</strong> and compute a trigger rate (fraction of runs where the skill activated). A should-trigger query passes if trigger_rate &gt; 0.5; a should-not query passes if trigger_rate &lt; 0.5.</p>
+
+  <h3>Step 4 — iterate</h3>
+  <ol>
+    <li>Evaluate on train + validation.</li>
+    <li>Identify train failures only.</li>
+    <li>Revise:
+      <ul>
+        <li>Should-trigger failures → broaden scope, add adjacent contexts.</li>
+        <li>Should-not failures → add specificity, mark out-of-scope.</li>
+        <li>Don't paste keywords from failed queries — that's overfitting. Find the underlying category and address that.</li>
+        <li>Stay under 1024 chars.</li>
+      </ul>
+    </li>
+    <li>Repeat ~5 iterations.</li>
+    <li>Pick the iteration with the <strong>best validation pass rate</strong> — not the latest one. Earlier iterations sometimes generalise better.</li>
+  </ol>
+
+  <h3>Before / after example</h3>
+  <pre><code># Before
+description: Process CSV files.
+
+# After
+description: >
+  Analyze CSV and tabular data files — compute summary statistics,
+  add derived columns, generate charts, and clean messy data. Use this
+  skill when the user has a CSV, TSV, or Excel file and wants to
+  explore, transform, or visualize the data, even if they don't
+  explicitly mention "CSV" or "analysis."</code></pre>
+
+  <p>The "after" is <strong>specific about <em>what</em></strong> (summary stats, derived columns, charts, cleaning) and <strong>broad about <em>when</em></strong> (CSV/TSV/Excel, even without explicit keywords).</p>
+
+  <div class="callout lab">
+    <h4>Lab — try it now</h4>
+    <p>Pick any skill in <code>~/.claude/skills/</code> (or write a fresh one), build a 20-query labeled set, and run the optimization loop. If you don't want to write the runner from scratch, the <code>skill-creator</code> Skill in <a href="https://github.com/anthropics/skills/tree/main/skills/skill-creator">anthropics/skills</a> automates the whole loop and emits an HTML report.</p>
+  </div>
+</section>
+
+<!-- Module 10 -->
+<section id="m10" class="module">
+  <div class="num">Module 10</div>
+  <h2>Implementing a Skills client</h2>
+  <p class="summary">If you're building an agent and want to be a conformant Skills client.</p>
+
+  <p>This module is for agent <em>builders</em>, not skill authors. agentskills.io publishes the canonical implementation lifecycle — five steps from filesystem scan to context lifecycle.</p>
+
+  <h3>Step 1 — Discover</h3>
+  <p>Scan project + user (and optionally org/built-in) scopes for subdirectories containing exactly <code>SKILL.md</code>. Always include the cross-client convention <code>.agents/skills/</code>. Consider also scanning <code>.claude/skills/</code> for compatibility.</p>
+  <p>Bound the search: max depth 4-6, max ~2,000 directories. Skip <code>.git/</code>, <code>node_modules/</code>. Honour <code>.gitignore</code>. Apply a <strong>workspace trust check</strong> before loading project-level skills — they live in the repo, which may be untrusted.</p>
+
+  <h3>Step 2 — Parse</h3>
+  <p>Be lenient. Warn on cosmetic violations (name mismatch, &gt;64 chars), only <em>skip</em> the skill on essentials (missing description, unparseable YAML). Skills authored for other clients sometimes have technically-invalid YAML — most often unquoted colons inside values:</p>
+  <pre><code>description: Use this skill when: the user asks about PDFs   # invalid YAML</code></pre>
+  <p>A common fix is to wrap such values in quotes and retry parsing.</p>
+
+  <h3>Step 3 — Disclose (Tier 1)</h3>
+  <p>Inject a structured catalog into the system prompt or a dedicated tool description:</p>
+  <pre><code>&lt;available_skills&gt;
+  &lt;skill&gt;
+    &lt;name&gt;pdf-processing&lt;/name&gt;
+    &lt;description&gt;Extract PDF text, fill forms, merge files. Use when handling PDFs.&lt;/description&gt;
+    &lt;location&gt;/home/user/.agents/skills/pdf-processing/SKILL.md&lt;/location&gt;
+  &lt;/skill&gt;
+&lt;/available_skills&gt;</code></pre>
+  <p>~50–100 tokens per skill. Hide disabled skills entirely; don't list them and block at activation time.</p>
+
+  <h3>Step 4 — Activate (Tier 2)</h3>
+  <p>Two patterns: <strong>file-read activation</strong> (the model reads <code>SKILL.md</code> with its standard read tool) or <strong>dedicated <code>activate_skill(name)</code> tool</strong>. The latter lets you wrap content in identifying tags, list bundled resources, and enforce permissions.</p>
+
+  <p>Constrain the <code>name</code> parameter to the discovered set (enum) so the model can't hallucinate a non-existent skill.</p>
+
+  <h3>Step 5 — Manage skill context over time</h3>
+  <ul>
+    <li><strong>Protect skill content from compaction.</strong> Losing a skill mid-session silently degrades behaviour without any visible error.</li>
+    <li><strong>Deduplicate activations.</strong> Skip re-injection if already in context.</li>
+    <li><strong>Subagent delegation</strong> (advanced) — run the skill in a separate session and return only a summary.</li>
+  </ul>
+
+  <h3>Reference SDK</h3>
+  <p>Use <a href="https://github.com/agentskills/agentskills/tree/main/skills-ref"><code>skills-ref</code></a> as your validator and parser. Drop it in CI:</p>
+  <pre><code>skills-ref validate ./my-skill</code></pre>
+
+  <div class="callout takeaway">
+    <h4>Takeaway</h4>
+    <p>Implementing the five-step lifecycle correctly is what makes you a conformant client. The hardest part is context management (step 5) — get it wrong and skills "stop working" silently after the first compaction.</p>
+  </div>
+</section>
+
+<!-- Module 11 -->
+<section id="m11" class="module">
+  <div class="num">Module 11</div>
+  <h2>Security &amp; rollout playbook</h2>
+  <p class="summary">Treat installing a Skill like installing software.</p>
+
+  <h3>Threat model</h3>
+  <ul>
+    <li>Malicious instructions can redirect tool use away from the stated purpose.</li>
+    <li>Bundled scripts can exfiltrate data or attack the host.</li>
+    <li>External-URL fetches inside skills can be tampered with after installation.</li>
+    <li>A skill with broad <code>allowed-tools</code> quietly raises the trust boundary.</li>
+  </ul>
+
+  <h3>Mitigations</h3>
+  <ul>
+    <li>Install only from trusted sources — Anthropic-published or org-internal.</li>
+    <li>Audit <strong>every</strong> bundled file: SKILL.md, references, scripts, assets.</li>
+    <li>Be especially suspicious of skills that fetch external URLs at runtime.</li>
+    <li>In Claude Code, project skills' <code>allowed-tools</code> only activates after workspace trust is granted.</li>
+    <li>Use <code>disable-model-invocation: true</code> for any side-effect command (<code>/deploy</code>, <code>/send-slack</code>) so the trigger stays human.</li>
+    <li>The Claude API has no network — partial mitigation against exfiltration. claude.ai's network is admin-policy-controlled.</li>
+  </ul>
+
+  <h3>Team rollout playbook</h3>
+  <ol>
+    <li>Pick <strong>one</strong> repeating workflow your team explains over and over.</li>
+    <li>Write 3 evaluations <em>before</em> you write the SKILL.md.</li>
+    <li>Draft a minimal SKILL.md (under 100 lines).</li>
+    <li>Use it personally first (<code>~/.claude/skills/</code> or <code>~/.agents/skills/</code>); iterate against the evals.</li>
+    <li>Promote to the project (<code>.claude/skills/</code> or <code>.agents/skills/</code>); commit it.</li>
+    <li>Run a 2-week observation window. Collect failure cases.</li>
+    <li>Crystallise lessons into the wiki. Expand to a plugin if it should be shared org-wide.</li>
+  </ol>
+
+  <div class="callout">
+    <h4>Note on ZDR</h4>
+    <p>Skills are <strong>not</strong> covered by Zero-Data-Retention agreements as of May 2026. Don't put highly sensitive procedural knowledge into a Skill that runs on a non-self-hosted surface.</p>
+  </div>
+</section>
+
+<!-- Module 12 -->
+<section id="m12" class="module">
+  <div class="num">Module 12</div>
+  <h2>Cheatsheet &amp; resources</h2>
+  <p class="summary">A one-screen quality checklist plus links you'll want again.</p>
+
+  <h3>Skill quality checklist</h3>
+  <h4>Core quality</h4>
+  <ul>
+    <li>☐ Description: third person, what + when, key terms, &lt;1024 chars</li>
+    <li>☐ <code>name</code> matches parent directory and obeys naming rules</li>
+    <li>☐ SKILL.md body &lt; 500 lines</li>
+    <li>☐ Sibling references one level deep</li>
+    <li>☐ Reference files &gt;100 lines have a Contents block</li>
+    <li>☐ Consistent terminology throughout</li>
+    <li>☐ Concrete examples, not abstract handwaving</li>
+    <li>☐ Workflows have clear, numbered steps</li>
+    <li>☐ Time-sensitive content moved to a Legacy section</li>
+  </ul>
+
+  <h4>Code &amp; scripts</h4>
+  <ul>
+    <li>☐ Scripts handle their own errors; no "punt to Claude"</li>
+    <li>☐ No voodoo constants — every magic number documented</li>
+    <li>☐ Forward-slash paths only</li>
+    <li>☐ Required packages listed and verified available in the runtime</li>
+    <li>☐ Validation step for any destructive operation</li>
+    <li>☐ Plan-validate-execute pattern for batch operations</li>
+  </ul>
+
+  <h4>Testing</h4>
+  <ul>
+    <li>☐ ≥3 evaluations covering the original capability gap</li>
+    <li>☐ Description optimized with train/validation split</li>
+    <li>☐ Tested on Haiku / Sonnet / Opus</li>
+    <li>☐ Validated by <code>skills-ref validate</code></li>
+    <li>☐ Team feedback incorporated</li>
+  </ul>
+
+  <h3>Authoritative references</h3>
+  <ul>
+    <li><a href="https://agentskills.io">agentskills.io</a> — the open standard's home</li>
+    <li><a href="https://agentskills.io/specification">Specification</a> — frontmatter rules, validation, file layout</li>
+    <li><a href="https://agentskills.io/skill-creation/quickstart">Quickstart</a> — the cross-client <code>roll-dice</code> example</li>
+    <li><a href="https://agentskills.io/skill-creation/optimizing-descriptions">Optimizing skill descriptions</a> — the trigger-rate eval methodology</li>
+    <li><a href="https://agentskills.io/client-implementation/adding-skills-support">Adding skills support to your agent</a> — the 5-step implementation lifecycle</li>
+    <li><a href="https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills">Anthropic Engineering — Equipping agents with Skills</a></li>
+    <li><a href="https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices">Skill authoring best practices</a></li>
+    <li><a href="https://code.claude.com/docs/en/skills">Claude Code — Skills</a></li>
+    <li><a href="https://claude.com/blog/skills-explained">Skills vs Prompts vs Projects vs MCP vs Subagents</a></li>
+    <li><a href="https://github.com/anthropics/skills">github.com/anthropics/skills</a> — Anthropic's published skills (incl. <code>skill-creator</code>)</li>
+    <li><a href="https://github.com/agentskills/agentskills">github.com/agentskills/agentskills</a> — open spec + <code>skills-ref</code> SDK</li>
+  </ul>
+
+  <h3>Internal artefacts</h3>
+  <ul>
+    <li><a href="../index.md">Wiki index</a> — 17 cited pages</li>
+    <li><a href="../slides/training-en.html">Slide deck (EN)</a> · <a href="../slides/training-th.html">Slide deck (TH)</a></li>
+    <li><a href="course-th.html">หลักสูตรภาษาไทย</a></li>
+  </ul>
+
+  <div class="footer-nav">
+    <a href="#m1">↑ Back to top</a>
+    <a href="index.html">Portal home →</a>
+  </div>
+</section>
+
+</main>
+</div>
+</body>
+</html>

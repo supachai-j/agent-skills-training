@@ -1,0 +1,779 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Agent Skills 101 — หลักสูตรอ่านเอง (TH)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Thai:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #0f1116;
+    --panel: #181b22;
+    --panel-2: #1f242d;
+    --accent: #d97757;
+    --accent-2: #5d8aa8;
+    --muted: #8a93a3;
+    --text: #e8ecf2;
+    --border: rgba(255,255,255,0.08);
+    --code-bg: #11141a;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: "Noto Sans Thai", "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  code { font-family: "JetBrains Mono", "Menlo", monospace; font-size: 0.9em;
+    background: rgba(217,119,87,0.12); padding: 1px 6px; border-radius: 4px; }
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    padding: 16px 18px;
+    border-radius: 8px;
+    overflow-x: auto;
+    font-size: 0.85em;
+    line-height: 1.55;
+    font-family: "JetBrains Mono", "Menlo", monospace;
+  }
+  pre code { background: none; padding: 0; font-size: inherit; color: #d8e0eb; font-family: inherit; }
+
+  .layout { display: grid; grid-template-columns: 280px 1fr; max-width: 1280px; margin: 0 auto; gap: 0; }
+
+  aside.toc {
+    position: sticky; top: 0; align-self: start;
+    height: 100vh; overflow-y: auto;
+    border-right: 1px solid var(--border);
+    padding: 28px 18px 28px 24px;
+    background: var(--bg);
+  }
+  aside.toc .brand {
+    font-weight: 700; font-size: 0.95em;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 6px;
+  }
+  aside.toc .home-link { display: inline-block; color: var(--muted); font-size: 0.85em; margin-bottom: 26px; }
+  aside.toc h2 { font-size: 0.7em; text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted); margin: 16px 0 8px; }
+  aside.toc ol { list-style: none; padding: 0; margin: 0; counter-reset: step; }
+  aside.toc ol li { counter-increment: step; margin: 0; }
+  aside.toc ol li a {
+    display: block; color: var(--text); padding: 6px 10px;
+    border-radius: 6px; font-size: 0.92em; line-height: 1.5;
+  }
+  aside.toc ol li a::before {
+    content: counter(step) ". ";
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+  aside.toc ol li a:hover { background: var(--panel); text-decoration: none; }
+  aside.toc .meta { font-size: 0.78em; color: var(--muted); margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border); }
+  aside.toc .meta a { color: var(--accent); }
+
+  main {
+    padding: 56px 56px 96px;
+    max-width: 820px;
+  }
+  main header.page-head { margin-bottom: 40px; padding-bottom: 24px; border-bottom: 1px solid var(--border); }
+  main header.page-head .pill {
+    display: inline-block; padding: 4px 12px; border-radius: 999px;
+    background: rgba(217,119,87,0.15); color: var(--accent);
+    font-size: 0.72em; letter-spacing: 0.12em; text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  main header.page-head h1 { font-size: 2.2rem; font-weight: 700; margin: 0; letter-spacing: -0.01em; line-height: 1.3; }
+  main header.page-head .lede { color: var(--muted); margin: 14px 0 0; font-size: 1.02em; }
+  main header.page-head .quick-links { margin-top: 18px; font-size: 0.92em; }
+  main header.page-head .quick-links a { margin-right: 16px; }
+
+  section.module {
+    margin: 56px 0;
+    padding-top: 12px;
+    scroll-margin-top: 16px;
+  }
+  section.module .num {
+    color: var(--muted);
+    font-size: 0.8em;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+  section.module h2 {
+    font-size: 1.55rem;
+    margin: 6px 0 14px;
+    font-weight: 700;
+    letter-spacing: -0.005em;
+    line-height: 1.35;
+  }
+  section.module .summary {
+    color: var(--muted);
+    font-size: 1em;
+    margin: 0 0 22px;
+    padding-left: 14px;
+    border-left: 2px solid var(--accent);
+  }
+  section.module h3 { font-size: 1.15rem; margin: 32px 0 10px; color: var(--accent-2); }
+  section.module h4 { font-size: 1rem; margin: 22px 0 8px; color: var(--text); }
+  section.module ul, section.module ol { padding-left: 22px; }
+  section.module li { margin: 6px 0; }
+
+  .callout {
+    background: rgba(93,138,168,0.08);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent-2);
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin: 24px 0;
+  }
+  .callout.takeaway { border-left-color: var(--accent); background: rgba(217,119,87,0.06); }
+  .callout.lab { border-left-color: #6dba88; background: rgba(109,186,136,0.06); }
+  .callout h4 { margin: 0 0 8px; color: var(--text); font-size: 0.92em; text-transform: uppercase; letter-spacing: 0.08em; }
+  .callout.takeaway h4 { color: var(--accent); }
+  .callout.lab h4 { color: #6dba88; }
+  .callout p { margin: 6px 0; }
+
+  table {
+    width: 100%; border-collapse: collapse; margin: 18px 0;
+    font-size: 0.92em;
+  }
+  th, td { padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { color: var(--accent); font-weight: 600; font-size: 0.85em; text-transform: uppercase; letter-spacing: 0.06em; }
+  td code { font-size: 0.85em; }
+
+  blockquote {
+    margin: 18px 0;
+    padding: 0 0 0 18px;
+    color: var(--muted);
+    border-left: 3px solid var(--accent);
+    font-style: italic;
+  }
+
+  .term-en {
+    color: var(--muted);
+    font-style: italic;
+    font-size: 0.9em;
+  }
+
+  .footer-nav {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: 64px; padding-top: 24px; border-top: 1px solid var(--border);
+    font-size: 0.9em;
+  }
+
+  @media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; }
+    aside.toc { position: static; height: auto; border-right: none; border-bottom: 1px solid var(--border); padding: 20px 24px; }
+    main { padding: 32px 24px 64px; }
+  }
+</style>
+</head>
+<body>
+<div class="layout">
+
+<aside class="toc">
+  <div class="brand">Agent Skills 101</div>
+  <a class="home-link" href="index.html">← กลับหน้า Portal</a>
+
+  <h2>บทเรียน</h2>
+  <ol>
+    <li><a href="#m1">เริ่มต้น &amp; สิ่งที่จะได้เรียนรู้</a></li>
+    <li><a href="#m2">Agent Skill คืออะไร</a></li>
+    <li><a href="#m3">โครงสร้างของ SKILL.md</a></li>
+    <li><a href="#m4">Progressive Disclosure</a></li>
+    <li><a href="#m5">เป็น Open Standard ไม่ใช่ของ Anthropic เท่านั้น</a></li>
+    <li><a href="#m6">Skill ใช้ได้ที่ไหน</a></li>
+    <li><a href="#m7">Skill vs MCP vs Subagent</a></li>
+    <li><a href="#m8">แนวปฏิบัติในการเขียน Skill</a></li>
+    <li><a href="#m9">Lab — ปรับ Description</a></li>
+    <li><a href="#m10">สร้าง Client ที่รองรับ Skill</a></li>
+    <li><a href="#m11">ความปลอดภัย &amp; แผน Roll-out</a></li>
+    <li><a href="#m12">Cheatsheet &amp; แหล่งอ้างอิง</a></li>
+  </ol>
+
+  <div class="meta">
+    สไลด์: <a href="../slides/training-en.html">EN</a> · <a href="../slides/training-th.html">TH</a><br>
+    มาตรฐาน: <a href="https://agentskills.io">agentskills.io</a><br>
+    Wiki: <a href="../index.md">เปิดดู</a>
+  </div>
+</aside>
+
+<main>
+
+<header class="page-head">
+  <span class="pill">หลักสูตรอ่านเอง · ภาษาไทย</span>
+  <h1>Agent Skills — เจาะลึกเชิงเทคนิค</h1>
+  <p class="lede">บทเรียน 12 โมดูล ครอบคลุมมาตรฐานเปิด Agent Skills — ตั้งแต่นิยาม วิธีโหลด ไปจนถึงการเขียน, ทดสอบ, การรักษาความปลอดภัย และการ Roll-out ในทีม</p>
+  <div class="quick-links">
+    <a href="#m1">เริ่มอ่าน →</a>
+    <a href="../slides/training-th.html">สไลด์</a>
+    <a href="course-en.html">English version</a>
+  </div>
+</header>
+
+<!-- Module 1 -->
+<section id="m1" class="module">
+  <div class="num">โมดูล 01</div>
+  <h2>เริ่มต้น &amp; สิ่งที่จะได้เรียนรู้</h2>
+  <p class="summary">ปฐมบทสั้นๆ — ทำไมต้องมี Skill, อะไรเปลี่ยนแปลงเมื่อเริ่มใช้, และเส้นทางของหลักสูตร</p>
+
+  <p>Coding Agent สมัยใหม่เก่งงานทั่วๆ ไป แต่มักจะ <em>ไม่มี</em> บริบทเฉพาะที่จำเป็นสำหรับการทำงานจริงให้น่าเชื่อถือ — เช่น convention การ commit ของทีม, วิธีกรอกฟอร์ม PDF ที่บริษัทใช้, runbook การ migrate ที่ Senior Engineer เก็บไว้ใน Notion. <strong>Agent Skill</strong> คือฟอร์แมตเปิดสำหรับเก็บความรู้เชิงขั้นตอนเหล่านั้นในรูปโฟลเดอร์ (มี <code>SKILL.md</code> หนึ่งไฟล์ บวกพี่น้องเลือกได้) ซึ่ง agent ทุกตัวที่รองรับมาตรฐานสามารถค้นเจอและโหลดเข้าใช้งานเมื่อต้องการ</p>
+
+  <p>เมื่อเขียน Skill ครั้งเดียว — เราเลิกพิมพ์คำสั่งเดิมๆ ทุก session. เมื่อมันเข้า source control — ทั้งทีมได้ใช้. เมื่อมันอยู่ใน <code>.agents/skills/</code> — ทุก client ที่รองรับมาตรฐาน เช่น Claude Code, Copilot, Cursor, Codex, Gemini CLI และอีกหลายสิบตัว — สามารถใช้งานได้โดยไม่ต้องดัดแปลง</p>
+
+  <h3>หัวข้อที่ครอบคลุม</h3>
+  <ul>
+    <li>โครงสร้างทางเทคนิคของ Skill — frontmatter, body, ไฟล์พี่น้อง, กฎ validation</li>
+    <li>Progressive disclosure — ทำไม Skill ไม่ทำให้ context window ระเบิด และวิธีเขียนให้ใช้ประโยชน์</li>
+    <li>มาตรฐานเปิดที่ <code>agentskills.io</code> และ convention ข้าม client</li>
+    <li>กรอบการตัดสินใจระหว่าง Skill / MCP / Subagent (จะต้องใช้ทั้ง 3 อย่าง)</li>
+    <li>แนวปฏิบัติการเขียนพร้อมตัวอย่างจริง</li>
+    <li>Lab สั้นๆ เรื่องการปรับ description — มิติคุณภาพที่สำคัญที่สุด</li>
+    <li>วิธีทำ client ของคุณเองให้รองรับ Skill</li>
+    <li>โมเดลความปลอดภัย, แผน roll-out, และ cheatsheet ที่เก็บไว้ใช้ต่อได้</li>
+  </ul>
+
+  <div class="callout">
+    <h4>ใช้เวลา</h4>
+    <p>~45 นาทีสำหรับการอ่าน, ~90 นาทีถ้าทำ Lab ด้วย</p>
+  </div>
+</section>
+
+<!-- Module 2 -->
+<section id="m2" class="module">
+  <div class="num">โมดูล 02</div>
+  <h2>Agent Skill คืออะไร</h2>
+  <p class="summary">นิยามที่ชัดเจน ไม่ผูกกับเจ้าใดเจ้าหนึ่ง</p>
+
+  <p><strong>Agent Skill</strong> คือโฟลเดอร์ที่จัดระเบียบไว้ ประกอบด้วยคำสั่ง สคริปต์ และทรัพยากรต่างๆ ซึ่ง agent สามารถ <em>ค้นหาและโหลดเข้ามาแบบ dynamic</em> เพื่อทำงานเฉพาะอย่างให้ดีขึ้น สัญญาของรูปแบบนี้มี 3 ส่วน:</p>
+
+  <ol>
+    <li><strong>โฟลเดอร์</strong> ที่ชื่อตรงกับชื่อ Skill</li>
+    <li><strong>ไฟล์ <code>SKILL.md</code></strong> ที่ root ของโฟลเดอร์ มี YAML frontmatter + markdown</li>
+    <li><strong>โฟลเดอร์พี่น้องแบบทางเลือก</strong> ตามชื่อมาตรฐาน: <code>scripts/</code>, <code>references/</code>, <code>assets/</code></li>
+  </ol>
+
+  <pre><code>my-skill/
+├── SKILL.md          # บังคับ — ไฟล์เริ่มต้น
+├── scripts/          # ทางเลือก — โค้ดที่รันได้
+├── references/       # ทางเลือก — เอกสาร
+├── assets/           # ทางเลือก — template, ข้อมูล
+└── ...</code></pre>
+
+  <p>สเปคถูกออกแบบให้น้อยที่สุดเท่าที่จำเป็น มีฟิลด์บังคับ 2 ตัว — <code>name</code> และ <code>description</code> — บวก markdown body. ส่วนอื่นเป็น optional หรือเฉพาะ platform</p>
+
+  <blockquote>"การสร้าง Skill ก็เหมือนการเขียนคู่มือต้อนรับพนักงานใหม่" — Anthropic Engineering</blockquote>
+
+  <p>การเปรียบเทียบนี้แม่นยำ — พนักงานใหม่ไม่ต้องท่องทั้ง wiki ในวันแรก เขาต้องการสารบัญและ pointer ไปยังเอกสารลึกๆ. Agent ก็เหมือนกัน — มันไม่อ่าน Skill ทุกตัวจนจบ มันอ่านเฉพาะตัวที่เห็นว่าตรงกับงานปัจจุบัน</p>
+
+  <div class="callout takeaway">
+    <h4>ใจความสำคัญ</h4>
+    <p>Skill เป็น <em>โฟลเดอร์</em> ไม่ใช่ snippet. โครงสร้างไฟล์นั่นแหละ คือสิ่งที่ทำให้ progressive disclosure เป็นไปได้</p>
+  </div>
+</section>
+
+<!-- Module 3 -->
+<section id="m3" class="module">
+  <div class="num">โมดูล 03</div>
+  <h2>โครงสร้างของ <code>SKILL.md</code></h2>
+  <p class="summary">ฟิลด์ใน frontmatter, กฎ validation และเนื้อหา body</p>
+
+  <p>ทุกไฟล์ <code>SKILL.md</code> เริ่มด้วย YAML frontmatter ที่ขนาบด้วย <code>---</code>:</p>
+
+  <pre><code>---
+name: pdf-processing
+description: Extract text and tables from PDF files, fill forms, merge documents. Use when working with PDF files or when the user mentions PDFs, forms, or document extraction.
+---
+
+# PDF Processing
+...เนื้อหา markdown...</code></pre>
+
+  <h3>ฟิลด์บังคับ (ตามมาตรฐานเปิด)</h3>
+  <table>
+    <thead><tr><th>ฟิลด์</th><th>กฎ</th></tr></thead>
+    <tbody>
+      <tr><td><code>name</code></td><td>1-64 ตัวอักษร · ตัวพิมพ์เล็ก/ตัวเลข/ขีดกลาง · ห้ามขึ้นหรือลงด้วย <code>-</code> · ห้าม <code>--</code> ติดกัน · <strong>ต้องตรงกับชื่อโฟลเดอร์แม่</strong></td></tr>
+      <tr><td><code>description</code></td><td>1-1024 ตัวอักษร · ต้องบอกทั้ง <em>ทำอะไร</em> และ <em>ใช้เมื่อไหร่</em></td></tr>
+    </tbody>
+  </table>
+
+  <h3>ฟิลด์ทางเลือก (ตามมาตรฐานเปิด)</h3>
+  <table>
+    <thead><tr><th>ฟิลด์</th><th>ใช้ทำอะไร</th></tr></thead>
+    <tbody>
+      <tr><td><code>license</code></td><td>ชื่อ License หรือชื่อไฟล์ License ที่ bundle มาด้วย</td></tr>
+      <tr><td><code>compatibility</code></td><td>≤500 ตัวอักษร · ระบุข้อกำหนดสภาพแวดล้อม เช่น <code>Requires Python 3.14+ and uv</code></td></tr>
+      <tr><td><code>metadata</code></td><td>map string→string สำหรับฟิลด์เพิ่มเติมที่ client กำหนดเอง (เช่น version, author)</td></tr>
+      <tr><td><code>allowed-tools</code></td><td>รายการ tool ที่ pre-approve คั่นด้วย space — <em>ยังเป็น Experimental</em></td></tr>
+    </tbody>
+  </table>
+
+  <h3>ฟิลด์เสริมเฉพาะ Claude Code</h3>
+  <p>Claude Code เพิ่มฟิลด์ที่ใช้ได้เฉพาะตอน Skill ทำงานใน Claude Code: <code>when_to_use</code>, <code>argument-hint</code>, <code>arguments</code>, <code>disable-model-invocation</code>, <code>user-invocable</code>, <code>model</code>, <code>effort</code>, <code>context: fork</code>, <code>agent</code>, <code>hooks</code>, <code>paths</code>, <code>shell</code> — ใช้เมื่อต้องการพฤติกรรมเฉพาะ ถ้าต้องการ portability ข้าม client ให้ยึดเฉพาะฟิลด์มาตรฐาน</p>
+
+  <h3>เนื้อหา (Body)</h3>
+  <p>เขียนอะไรก็ได้ที่ช่วย agent ทำงานได้ดี — ขั้นตอน, ตัวอย่าง, edge case. ไม่มีข้อจำกัดเรื่องฟอร์แมต. ที่แนะนำคือไม่เกิน <strong>500 บรรทัด</strong> — ถ้าเกินให้แตกเป็นไฟล์พี่น้อง</p>
+
+  <div class="callout takeaway">
+    <h4>ใจความสำคัญ</h4>
+    <p>มาตรฐานเล็กโดยเจตนา — ใช้ฟิลด์บังคับให้คล่องก่อน แล้วค่อยเพิ่มฟิลด์ทางเลือกเมื่อจำเป็นจริงๆ</p>
+  </div>
+</section>
+
+<!-- Module 4 -->
+<section id="m4" class="module">
+  <div class="num">โมดูล 04</div>
+  <h2>Progressive Disclosure</h2>
+  <p class="summary">หลักการออกแบบเดียวที่ทำให้ Skill ขยายได้ไม่จำกัด</p>
+
+  <p>ถ้า Skill ทุกตัวถูกโหลดทั้งเนื้อหาเข้า context ตั้งแต่ตอน startup, การติดตั้ง 10 Skill ก็จะเผา 50,000 token ก่อนผู้ใช้พิมพ์อะไรเลย. Progressive disclosure คือโมเดลการโหลดทีละขั้นที่ป้องกันปัญหานี้ — Skill จะถูกโหลดใน <strong>3 ระดับ</strong>:</p>
+
+  <table>
+    <thead><tr><th>ระดับ</th><th>โหลดอะไร</th><th>เมื่อไหร่</th><th>Token ที่ใช้</th></tr></thead>
+    <tbody>
+      <tr><td><strong>L1 — Metadata</strong></td><td><code>name</code> + <code>description</code></td><td>ตลอด (เริ่ม session)</td><td>~100 / Skill</td></tr>
+      <tr><td><strong>L2 — Instructions</strong></td><td>SKILL.md body</td><td>เมื่อ agent ตัดสินใจว่าตรงงาน</td><td>&lt; 5,000 (แนะนำ)</td></tr>
+      <tr><td><strong>L3+ — Resources</strong></td><td>ไฟล์ใน <code>scripts/</code>, <code>references/</code>, <code>assets/</code></td><td>เรียกตามต้องการผ่าน bash / file-read</td><td>เกือบไม่จำกัด</td></tr>
+    </tbody>
+  </table>
+
+  <p>L3 คือจุดที่กำลังขยายตัว ไฟล์อ้างอิงเช่น <code>references/finance.md</code> กิน <em>0 token</em> จนกว่า agent จะเปิดดู. สคริปต์ยิ่งดีกว่า — โค้ดต้นฉบับไม่เคยเข้า context มีแต่ <em>output</em> เท่านั้น. สคริปต์ Python 2,000 บรรทัดที่พิมพ์ "OK" ใช้แค่ 3 token</p>
+
+  <h3>ผลต่อการเขียน</h3>
+  <ul>
+    <li><code>SKILL.md</code> body ไม่ควรเกิน <strong>500 บรรทัด</strong> — เนื้อหาที่ใหญ่กว่าให้แตกเป็นไฟล์พี่น้อง</li>
+    <li>อ้างอิงไฟล์พี่น้อง <strong>ลึกแค่ระดับเดียว</strong> จาก <code>SKILL.md</code> — agent อาจอ่านไฟล์ที่ต่อกันแบบ partial (เช่น <code>head -100</code>) ทำให้พลาดเนื้อหาหลังบรรทัด 100</li>
+    <li>ไฟล์อ้างอิงที่ยาวกว่า ~100 บรรทัด ต้องมี <strong>Contents</strong> อยู่ด้านบน เพื่อให้ agent กระโดดไปส่วนที่ต้องการได้</li>
+    <li>งาน deterministic ที่รันยาว ให้เขียนเป็น <strong>script</strong> ดีกว่าการเขียน instruction ให้ agent ทำตามเป๊ะๆ</li>
+  </ul>
+
+  <h3>Pattern 1 — guide + references</h3>
+<pre><code># PDF Processing
+
+## Quick start
+[คำแนะนำ inline สั้นๆ]
+
+## Advanced features
+- Form filling: see [FORMS.md](FORMS.md)
+- Reference: see [REFERENCE.md](REFERENCE.md)
+- Examples: see [EXAMPLES.md](EXAMPLES.md)</code></pre>
+
+  <h3>Pattern 2 — แยกตามโดเมน</h3>
+  <p>Skill ที่มีหลายโดเมน เช่น BigQuery ที่มีหลาย dataset ให้แยกอ้างอิงตามโดเมน เพื่อ agent โหลดเฉพาะที่ถูกถาม:</p>
+<pre><code>bigquery-skill/
+├── SKILL.md
+└── reference/
+    ├── finance.md   # revenue, billing
+    ├── sales.md     # pipeline, opportunities
+    ├── product.md   # adoption, usage
+    └── marketing.md # attribution</code></pre>
+
+  <div class="callout takeaway">
+    <h4>ใจความสำคัญ</h4>
+    <p>คุณติดตั้ง Skill ได้เป็นสิบเป็นร้อยตัว ตราบใดที่แต่ละตัวถูกออกแบบสำหรับ progressive disclosure. คอขวดคือ <em>description</em> ไม่ใช่ body</p>
+  </div>
+</section>
+
+<!-- Module 5 -->
+<section id="m5" class="module">
+  <div class="num">โมดูล 05</div>
+  <h2>เป็น Open Standard ไม่ใช่ของ Anthropic เท่านั้น</h2>
+  <p class="summary">ทำไม Skill ถึง portable และมาตรฐานทางการอยู่ที่ไหน</p>
+
+  <p>Anthropic เป็นคนคิดฟอร์แมต SKILL.md ก่อน แล้วปล่อยเป็น open standard ที่ <a href="https://agentskills.io">agentskills.io</a> โดยใช้ <a href="https://github.com/agentskills/agentskills">GitHub repository สาธารณะ</a> เป็นที่กำกับดูแล. มาตรฐานกำหนดเฉพาะ <em>ฟอร์แมต</em> — ส่วนการโหลดและการรันแล้วแต่ client</p>
+
+  <p>ณ พฤษภาคม 2569 ฟอร์แมตนี้ได้รับการรองรับโดย ecosystem ข้ามค่ายอย่างกว้างขวาง:</p>
+
+  <p style="color: var(--muted); font-size: 0.92em;">
+    Claude Code · Claude.ai · GitHub Copilot · VS Code · OpenAI Codex · Cursor · Gemini CLI · OpenCode · OpenHands · Goose (Block) · Letta · Roo Code · Mistral Vibe · Snowflake Cortex Code · Databricks Genie · Spring AI · Laravel Boost · Kiro · Factory · Junie (JetBrains) · Amp · Mux · Ona · Workshop · Trae (ByteDance) · Piebald · Pi · Emdash · Qodo · VT Code · Command Code · Agentman · Firebender · Google AI Edge Gallery · nanobot · fast-agent · Autohand
+  </p>
+
+  <p>ไฟล์ <code>SKILL.md</code> เพียงหนึ่งไฟล์ เขียนครั้งเดียว ใช้ได้กับทุกเครื่องมือข้างต้นโดยไม่ต้องแก้ — ตราบใดที่คุณใช้ฟิลด์ frontmatter ในกลุ่มมาตรฐาน และไม่พึ่งฟีเจอร์เฉพาะ client. นี่คือคุณค่าของ open spec — เขียนครั้งเดียว ใช้ได้ทั่ว ecosystem</p>
+
+  <h3>Convention ข้าม client: <code>.agents/skills/</code></h3>
+  <p>มาตรฐาน <em>ไม่ได้</em> บังคับว่า Skill ต้องอยู่ที่ไหน แต่ ecosystem มาบรรจบกันที่ <strong><code>.agents/skills/</code></strong> เป็น path กลาง — client ที่รองรับมาตรฐานควรสแกนตำแหน่งนี้ นอกเหนือจาก path ของ client เอง</p>
+
+  <table>
+    <thead><tr><th>ขอบเขต</th><th>เฉพาะ client</th><th>ข้าม client</th></tr></thead>
+    <tbody>
+      <tr><td>Project</td><td><code>&lt;repo&gt;/.&lt;client&gt;/skills/</code></td><td><code>&lt;repo&gt;/.agents/skills/</code></td></tr>
+      <tr><td>User</td><td><code>~/.&lt;client&gt;/skills/</code></td><td><code>~/.agents/skills/</code></td></tr>
+    </tbody>
+  </table>
+
+  <p>กฎสากล: <strong>Project ทับ User</strong>. Client ใหม่ๆ หลายตัวยังสแกน <code>.claude/skills/</code> เพื่อความเข้ากันด้วย เพราะ Skill เก่าจำนวนมากอยู่ที่นั่น</p>
+
+  <div class="callout takeaway">
+    <h4>ใจความสำคัญ</h4>
+    <p>วาง Skill ของทีมไว้ที่ <code>&lt;repo&gt;/.agents/skills/</code> · ของส่วนตัวที่ <code>~/.agents/skills/</code> · ใช้ path เฉพาะ client เมื่อจำเป็นต้องใช้ฟิลด์เฉพาะ client เท่านั้น</p>
+  </div>
+</section>
+
+<!-- Module 6 -->
+<section id="m6" class="module">
+  <div class="num">โมดูล 06</div>
+  <h2>Skill ใช้ได้ที่ไหน</h2>
+  <p class="summary">เปรียบเทียบ surface ต่อ surface — ความสามารถ, การแชร์, ข้อจำกัด runtime</p>
+
+  <table>
+    <thead><tr><th>Surface</th><th>Pre-built</th><th>Custom</th><th>การแชร์</th><th>เครือข่าย</th></tr></thead>
+    <tbody>
+      <tr><td>Claude API</td><td>pptx · xlsx · docx · pdf</td><td>ผ่าน <code>/v1/skills</code></td><td>ทั้ง workspace</td><td><strong>ปิด</strong></td></tr>
+      <tr><td>Claude.ai</td><td>built-in (มองไม่เห็น)</td><td>อัปโหลด ZIP</td><td>ต่อผู้ใช้</td><td>ตามนโยบาย</td></tr>
+      <tr><td>Claude Code</td><td>—</td><td>จาก Filesystem</td><td>Plugin / Project / Personal</td><td><strong>เปิดเต็ม</strong></td></tr>
+    </tbody>
+  </table>
+
+  <h3>รายละเอียด Claude API</h3>
+  <p>Skill รันใน sandbox code-execution ของ API. ต้องการ beta header 3 ตัว:</p>
+  <pre><code>anthropic-beta: code-execution-2025-08-25
+anthropic-beta: skills-2025-10-02
+anthropic-beta: files-api-2025-04-14</code></pre>
+  <p>อ้างอิง Skill ผ่าน <code>skill_id</code> ใน parameter <code>container</code> ร่วมกับ tool code-execution. Sandbox <strong>ไม่มีเครือข่าย</strong> และ <strong>ติดตั้ง package ตอน runtime ไม่ได้</strong> — ใช้ได้เฉพาะ package ที่ติดมาแล้ว. Skill ยัง <strong>ไม่</strong> รองรับ Zero-Data-Retention</p>
+
+  <h3>รายละเอียด Claude Code</h3>
+  <p>ตำแหน่งและลำดับ:</p>
+  <table>
+    <thead><tr><th>ที่ตั้ง</th><th>Path</th><th>ขอบเขต</th></tr></thead>
+    <tbody>
+      <tr><td>Enterprise</td><td>managed settings</td><td>ทั้งองค์กร</td></tr>
+      <tr><td>Personal</td><td><code>~/.claude/skills/&lt;ชื่อ&gt;/SKILL.md</code></td><td>ทุกโปรเจกต์ของคุณ</td></tr>
+      <tr><td>Project</td><td><code>.claude/skills/&lt;ชื่อ&gt;/SKILL.md</code></td><td>เฉพาะ repo นี้</td></tr>
+      <tr><td>Plugin</td><td><code>&lt;plugin&gt;/skills/&lt;ชื่อ&gt;/SKILL.md</code></td><td>เมื่อเปิดใช้ plugin</td></tr>
+    </tbody>
+  </table>
+  <p>ลำดับ: <strong>enterprise &gt; personal &gt; project</strong>. Plugin skill ใช้ namespace <code>plugin:skill</code> ไม่ชนกัน</p>
+
+  <h3>Superpowers ของ Claude Code</h3>
+  <ul>
+    <li><code>!`git diff HEAD`</code> — <strong>Dynamic Context Injection</strong>: รัน shell <em>ก่อน</em> Claude อ่าน Skill output แทรกในข้อความ</li>
+    <li><code>context: fork</code> — รัน Skill ใน subagent ที่มี tool และ context แยกออกจากบทสนทนาหลัก</li>
+    <li><code>allowed-tools</code> — pre-approve tool ตอน Skill ทำงาน ข้ามการ confirm รายครั้ง</li>
+    <li><code>disable-model-invocation: true</code> — เฉพาะ user เท่านั้นที่กดเรียกได้ (ใช้สำหรับ <code>/deploy</code>, <code>/send-slack</code>)</li>
+    <li><code>${CLAUDE_SKILL_DIR}</code> — ชี้ไปยังโฟลเดอร์ของ Skill เอง · ทำให้ script bundle ทำงานได้ไม่ขึ้นกับ working directory</li>
+  </ul>
+
+  <div class="callout">
+    <h4>หมายเหตุข้าม Surface</h4>
+    <p>Custom Skill <strong>ไม่</strong> sync ข้าม surface ต้องอัปโหลดแยกที่ API, claude.ai, Claude Code. ที่ portable คือ <em>ฟอร์แมต</em> ไม่ใช่ deployment</p>
+  </div>
+</section>
+
+<!-- Module 7 -->
+<section id="m7" class="module">
+  <div class="num">โมดูล 07</div>
+  <h2>Skill vs MCP vs Subagent</h2>
+  <p class="summary">3 คำถามที่ต่างกัน ไม่ใช่ 3 คำตอบที่แข่งกัน</p>
+
+  <p>มือใหม่มักพยายามเลือกเอาตัวเดียว แต่ระบบ production มักใช้ทั้ง 3 อย่าง. กุญแจคือรู้ว่าแต่ละอย่างเก่งงานแบบไหน</p>
+
+  <table>
+    <thead><tr><th>คุณสมบัติ</th><th>Skill</th><th>Prompt</th><th>Project</th><th>Subagent</th><th>MCP</th></tr></thead>
+    <tbody>
+      <tr><td>วัตถุประสงค์</td><td>ความรู้เชิงขั้นตอน</td><td>คำสั่งราย turn</td><td>ความรู้พื้นหลัง</td><td>มอบหมายงาน</td><td>เชื่อมต่อ tool ภายนอก</td></tr>
+      <tr><td>คงอยู่</td><td>ข้ามบทสนทนา</td><td>บทสนทนาเดียว</td><td>ใน project</td><td>ข้าม session</td><td>ต่อเนื่อง</td></tr>
+      <tr><td>การโหลด</td><td>Dynamic ตามต้องการ</td><td>ทุก turn</td><td>โหลดเสมอ</td><td>เมื่อเรียก</td><td>มีอยู่ตลอด</td></tr>
+      <tr><td>มีโค้ดได้</td><td>มี</td><td>ไม่มี</td><td>ไม่มี</td><td>มี</td><td>มี</td></tr>
+    </tbody>
+  </table>
+
+  <h3>กรอบการตัดสินใจ</h3>
+  <pre><code>ต้องการให้ Claude รู้วิธีทำ X ซ้ำๆ?         → Skill
+ต้องการให้ Claude เข้าถึงระบบภายนอก?       → MCP
+ต้องการงานที่ทำแยก มี context ของตัวเอง?   → Subagent</code></pre>
+
+  <h3>การ Compose (pattern ทรงพลังที่สุด)</h3>
+  <pre><code>main agent
+  └─ subagent: code-reviewer (มี context แยก, tool อ่านอย่างเดียว)
+       └─ skill: review-conventions (โหลดตอนใช้งาน)
+              └─ MCP: GitHub (ดึง diff + comment ของ PR)</code></pre>
+
+  <p>ทุกชั้นมีเหตุผลของตัวเอง — Subagent แยก context, Skill ถือ know-how, MCP ดึงข้อมูล. งานสำคัญเกิดที่จุดเชื่อมต่อระหว่างทั้งสาม</p>
+
+  <div class="callout takeaway">
+    <h4>ใจความสำคัญ</h4>
+    <p>อย่ามองเป็น either/or — คำตอบที่ถูกมักเป็น "Skill บวก MCP, อาจอยู่ใน Subagent ด้วย"</p>
+  </div>
+</section>
+
+<!-- Module 8 -->
+<section id="m8" class="module">
+  <div class="num">โมดูล 08</div>
+  <h2>แนวปฏิบัติในการเขียน Skill</h2>
+  <p class="summary">คำแนะนำทางการของ Anthropic แบบกลั่น</p>
+
+  <h3>4 หลักการสำคัญ</h3>
+  <ol>
+    <li><strong>กระชับ</strong> — context window คือทรัพย์สินส่วนรวม ทุก token หลังโหลด SKILL.md จะแย่งพื้นที่กับบทสนทนา</li>
+    <li><strong>ถือว่า Claude ฉลาด</strong> — เพิ่มเฉพาะสิ่งที่โมเดลยังไม่รู้ ไม่ต้องอธิบายว่า PDF คืออะไร</li>
+    <li><strong>ปรับระดับอิสระให้เหมาะกับงาน</strong> — DB migration ต้องการคำสั่งเป๊ะ; code review ต้องการแค่ทิศทางทั่วไป</li>
+    <li><strong>ทดสอบกับทุกโมเดล</strong> ที่ Skill จะใช้ (Haiku, Sonnet, Opus) — ที่ใช้กับ Opus ดี อาจต้องบอกละเอียดกว่ากับ Haiku</li>
+  </ol>
+
+  <h3>การตั้งชื่อ</h3>
+  <p>ใช้รูป <strong>gerund (verb + ing)</strong> ถ้าเป็นไปได้: <code>processing-pdfs</code>, <code>analyzing-spreadsheets</code>, <code>reviewing-pull-requests</code>. หลีกเลี่ยงชื่อกว้างๆ — <code>helper</code>, <code>utils</code>, <code>tools</code>, <code>data</code> — ไม่บอก agent ว่าจะใช้ <em>เมื่อไหร่</em></p>
+
+  <h3>กฎของ Description</h3>
+  <ul>
+    <li>เขียนด้วย <strong>บุรุษที่สามเสมอ</strong> — <em>"Processes Excel files…"</em>, ห้ามเขียน <em>"I can help…"</em> หรือ <em>"You can use this…"</em></li>
+    <li>ต้องบอกทั้ง <strong>ทำอะไร</strong> และ <strong>เมื่อไหร่</strong></li>
+    <li>ใช้ประโยคคำสั่งสำหรับส่วน trigger: <em>"Use when the user…"</em></li>
+    <li>"Err on the side of being pushy" — ระบุบริบทใกล้เคียง: <em>"…even if they don't explicitly mention CSV or analysis."</em></li>
+  </ul>
+
+  <h3>Anti-patterns ที่ต้องเลี่ยง</h3>
+  <ul>
+    <li><strong>Path แบบ Windows</strong> (<code>scripts\helper.py</code>) — ใช้ forward slash เท่านั้น</li>
+    <li><strong>Voodoo constants</strong> — ทุกตัวเลขลึกลับต้องมีคำอธิบาย ไม่งั้นเป็นบั๊กที่รออยู่</li>
+    <li><strong>"Punt-to-Claude" error handling</strong> — แก้ใน script ไม่ใช่โยนปัญหากลับใส่ prompt</li>
+    <li><strong>เสนอทางเลือก 3-4 ทาง</strong> — ให้ default 1 ตัว + ทางลงเสริม</li>
+    <li><strong>คำสั่งที่ผูกกับเวลา</strong> — ของเก่าให้ย้ายไปส่วน "Legacy" จะได้ไม่กระทบของใหม่</li>
+  </ul>
+
+  <h3>Workflow</h3>
+  <p>สำหรับงานหลายขั้น ให้ checklist ที่ agent คัดลอกใส่ response แล้วติ๊กตามไปได้. Pattern: <strong>plan → validate → execute</strong> — ขั้น validate ดักจุดผิดก่อนจะกลายเป็นความเสียหาย</p>
+
+  <pre><code>## ขั้นตอนกรอกฟอร์ม PDF
+
+คัดลอก checklist:
+- [ ] ขั้น 1: วิเคราะห์ฟอร์ม (รัน analyze_form.py)
+- [ ] ขั้น 2: สร้าง field mapping (แก้ fields.json)
+- [ ] ขั้น 3: ตรวจ mapping (รัน validate_fields.py)
+- [ ] ขั้น 4: กรอกฟอร์ม (รัน fill_form.py)
+- [ ] ขั้น 5: ยืนยันผลลัพธ์ (รัน verify_output.py)</code></pre>
+
+  <div class="callout takeaway">
+    <h4>ใจความสำคัญ</h4>
+    <p>2 จุดที่ leverage สูงสุดในทุก Skill คือ <em>description</em> (ทริกเกอร์ถูกเวลามั้ย) และ <em>workflow</em> (ทำให้พลาดยากขึ้นมั้ย) — อื่นๆ รองลงมาทั้งหมด</p>
+  </div>
+</section>
+
+<!-- Module 9 -->
+<section id="m9" class="module">
+  <div class="num">โมดูล 09</div>
+  <h2>Lab — ปรับ Description</h2>
+  <p class="summary">Lab สั้นๆ — ปรับ description ของ Skill เหมือนปรับโมเดล ML</p>
+
+  <p>ฟิลด์ <code>description</code> เป็น <strong>ปุ่ม trigger เพียงปุ่มเดียว</strong> — ระบุไม่ชัดก็ไม่ activate, กว้างเกินก็ activate ผิดเวลา. agentskills.io เผยแพร่ loop ที่ยืมแนวคิดจาก ML evaluation</p>
+
+  <h3>ขั้นที่ 1 — เตรียม query set ที่ติด label</h3>
+  <p>ตั้งเป้า 20 query แบบที่ user จริงพิมพ์: should-trigger ครึ่ง, should-not ครึ่ง</p>
+  <pre><code>[
+  { "query": "I've got a spreadsheet in ~/data/q4_results.xlsx with revenue in col C and expenses in col D — can you add a profit margin column and highlight anything under 10%?", "should_trigger": true },
+  { "query": "whats the quickest way to convert this json file to yaml", "should_trigger": false }
+]</code></pre>
+
+  <p>Should-trigger query ให้หลากหลายในแกน: phrasing (ทางการ/casual/พิมพ์ผิด), explicitness (เอ่ยชื่อโดเมนกับซ่อน), detail (สั้นกับยาว), complexity (ขั้นเดียวกับหลายขั้น)</p>
+
+  <p>Should-not query ที่มีค่าที่สุดคือ <strong>near-miss</strong> — query ที่มี keyword ทับซ้อนกับ Skill แต่จริงๆ ต้องการสิ่งอื่น. "Write a fibonacci function" เป็น negative ที่อ่อน (ไม่ทดสอบอะไร); "I need to update the formulas in my Excel budget spreadsheet" เป็น negative ที่แข็งแกร่งสำหรับ skill วิเคราะห์ CSV เพราะ keyword ทับ แต่งานจริงคือแก้ Excel ไม่ใช่วิเคราะห์ CSV</p>
+
+  <h3>ขั้นที่ 2 — แบ่ง train / validation</h3>
+  <p>Train ~60% · Validation ~40% · ค้างการแบ่งไว้ตลอด เพื่อเปรียบเทียบรอบต่อรอบได้แบบเหมือนๆ กัน. ทั้ง 2 set ต้องมีสัดส่วน positive/negative ใกล้เคียงกัน</p>
+
+  <h3>ขั้นที่ 3 — วัด trigger rate</h3>
+  <p>โมเดลไม่ deterministic. รันแต่ละ query <strong>3 ครั้ง</strong> คำนวณ trigger rate (สัดส่วนรอบที่ Skill ทริกเกอร์). Should-trigger query ผ่านถ้า trigger_rate &gt; 0.5; should-not ผ่านถ้า trigger_rate &lt; 0.5</p>
+
+  <h3>ขั้นที่ 4 — Iterate</h3>
+  <ol>
+    <li>Evaluate ทั้ง train + validation</li>
+    <li>เลือกดูเฉพาะที่ฟัน train</li>
+    <li>ปรับ:
+      <ul>
+        <li>Should-trigger ฟัน → ขยาย scope, เพิ่มบริบทใกล้เคียง</li>
+        <li>Should-not ฟัน → เพิ่มความเฉพาะเจาะจง, ระบุว่าไม่รวมอะไร</li>
+        <li>อย่าลอก keyword จาก query ที่ฟันมาตรงๆ — นั่นคือ overfit. ให้หาหมวดหมู่ใต้ query นั้นแทน</li>
+        <li>คุมความยาวไม่เกิน 1024 ตัวอักษร</li>
+      </ul>
+    </li>
+    <li>ทำซ้ำประมาณ 5 รอบ</li>
+    <li>เลือกรอบที่ <strong>validation pass-rate ดีที่สุด</strong> — ไม่ใช่รอบล่าสุด เพราะรอบเก่าๆ บางครั้งทั่วไปกว่า</li>
+  </ol>
+
+  <h3>ตัวอย่าง ก่อน / หลัง</h3>
+  <pre><code># ก่อน
+description: Process CSV files.
+
+# หลัง
+description: >
+  Analyze CSV and tabular data files — compute summary statistics,
+  add derived columns, generate charts, and clean messy data. Use this
+  skill when the user has a CSV, TSV, or Excel file and wants to
+  explore, transform, or visualize the data, even if they don't
+  explicitly mention "CSV" or "analysis."</code></pre>
+
+  <p>"หลัง" <strong>เฉพาะเจาะจงในส่วน <em>ทำอะไร</em></strong> (สถิติสรุป, เพิ่มคอลัมน์, ทำชาร์ต, clean ข้อมูล) และ <strong>กว้างในส่วน <em>เมื่อไหร่</em></strong> (CSV/TSV/Excel แม้ไม่เอ่ยคำเหล่านั้น)</p>
+
+  <div class="callout lab">
+    <h4>Lab — ลองทำตอนนี้</h4>
+    <p>เลือก Skill ใดก็ได้ใน <code>~/.claude/skills/</code> (หรือเขียนใหม่), เตรียม query set 20 ตัวที่ติด label, แล้วรัน loop. ถ้าไม่อยากเขียน runner เอง — มี Skill ชื่อ <code>skill-creator</code> ใน <a href="https://github.com/anthropics/skills/tree/main/skills/skill-creator">anthropics/skills</a> ที่ทำ loop ทั้งหมดให้พร้อม HTML report</p>
+  </div>
+</section>
+
+<!-- Module 10 -->
+<section id="m10" class="module">
+  <div class="num">โมดูล 10</div>
+  <h2>สร้าง Client ที่รองรับ Skill</h2>
+  <p class="summary">สำหรับคนสร้าง agent ที่อยากให้ตัวเอง conformant กับ Skill มาตรฐาน</p>
+
+  <p>โมดูลนี้สำหรับ <em>คนสร้าง agent</em> ไม่ใช่คนเขียน Skill. agentskills.io ตีพิมพ์ lifecycle 5 ขั้นตอน — ตั้งแต่สแกน filesystem จนถึงดูแล context</p>
+
+  <h3>ขั้น 1 — Discover</h3>
+  <p>สแกน scope project + user (และเลือกได้ org/built-in) หา subdirectory ที่มีไฟล์ <code>SKILL.md</code> เป๊ะๆ. รวม convention <code>.agents/skills/</code> เสมอ. หลายตัวสแกน <code>.claude/skills/</code> ด้วยเพื่อความเข้ากัน</p>
+  <p>คุมความลึก: depth 4-6, ไม่เกิน ~2,000 directory. ข้าม <code>.git/</code>, <code>node_modules/</code>. เคารพ <code>.gitignore</code>. <strong>ตรวจ trust</strong> ของ workspace ก่อนโหลด project skill — เพราะมาจาก repo ที่อาจไม่น่าเชื่อถือ</p>
+
+  <h3>ขั้น 2 — Parse</h3>
+  <p>เป็น lenient — เตือนเฉพาะข้อผิดพลาดเล็ก (name ไม่ตรงโฟลเดอร์, ยาวเกิน 64), <em>ข้าม</em> Skill เฉพาะถ้าเรื่องสำคัญ (description ขาด, YAML พัง). Skill ที่เขียนมาจาก client อื่นบางทีมี YAML ที่เพี้ยนเล็กน้อย — ที่พบบ่อยคือ colon ที่ไม่ใส่ quote ใน value:</p>
+  <pre><code>description: Use this skill when: the user asks about PDFs   # YAML ไม่ valid</code></pre>
+  <p>Workaround ที่นิยม: ลอง wrap value ใน quote แล้ว parse ใหม่</p>
+
+  <h3>ขั้น 3 — Disclose (Tier 1)</h3>
+  <p>แทรก catalog เป็น structured ลงใน system prompt หรือ description ของ tool พิเศษ:</p>
+  <pre><code>&lt;available_skills&gt;
+  &lt;skill&gt;
+    &lt;name&gt;pdf-processing&lt;/name&gt;
+    &lt;description&gt;Extract PDF text, fill forms, merge files. Use when handling PDFs.&lt;/description&gt;
+    &lt;location&gt;/home/user/.agents/skills/pdf-processing/SKILL.md&lt;/location&gt;
+  &lt;/skill&gt;
+&lt;/available_skills&gt;</code></pre>
+  <p>~50–100 token ต่อ Skill. Skill ที่ปิดอยู่ให้ซ่อนทั้งหมด — ไม่ต้องลิสต์แล้วบล็อกตอน activate (เปลืองรอบ)</p>
+
+  <h3>ขั้น 4 — Activate (Tier 2)</h3>
+  <p>มี 2 แบบ: <strong>file-read activation</strong> (โมเดลใช้ tool อ่านไฟล์ทั่วไปอ่าน <code>SKILL.md</code>) หรือ <strong>tool พิเศษ <code>activate_skill(name)</code></strong>. แบบหลังทำให้คุณ wrap content ด้วย tag, ลิสต์ resource ที่ bundle ไว้, และบังคับ permission ได้</p>
+
+  <p>จำกัด parameter <code>name</code> ให้เป็น enum ของ Skill ที่ค้นเจอ — กัน hallucinate ชื่อ Skill ที่ไม่มีอยู่</p>
+
+  <h3>ขั้น 5 — ดูแล context ของ Skill</h3>
+  <ul>
+    <li><strong>ป้องกัน skill content จากการ compact</strong> — สูญหายกลางทาง = พฤติกรรมแย่ลงเงียบๆ ไม่มี error</li>
+    <li><strong>De-duplicate การ activate</strong> — ถ้าอยู่ใน context แล้วอย่าฉีดซ้ำ</li>
+    <li><strong>Subagent delegation</strong> (advanced) — รัน skill แยก session แล้วคืนแค่ summary</li>
+  </ul>
+
+  <h3>Reference SDK</h3>
+  <p>ใช้ <a href="https://github.com/agentskills/agentskills/tree/main/skills-ref"><code>skills-ref</code></a> เป็น validator + parser. วางใน CI:</p>
+  <pre><code>skills-ref validate ./my-skill</code></pre>
+
+  <div class="callout takeaway">
+    <h4>ใจความสำคัญ</h4>
+    <p>การทำ lifecycle 5 ขั้นให้ถูกต้อง คือสิ่งที่ทำให้คุณเป็น conformant client. ที่ยากที่สุดคือ context management (ขั้น 5) — ทำพลาดแล้ว Skill จะ "หยุดทำงาน" หลัง compaction ครั้งแรกโดยไม่มี error</p>
+  </div>
+</section>
+
+<!-- Module 11 -->
+<section id="m11" class="module">
+  <div class="num">โมดูล 11</div>
+  <h2>ความปลอดภัย &amp; แผน Roll-out</h2>
+  <p class="summary">การติดตั้ง Skill = การติดตั้งซอฟต์แวร์ ต้องระวังเท่ากัน</p>
+
+  <h3>Threat model</h3>
+  <ul>
+    <li>คำสั่งที่เป็นพิษ redirect การใช้ tool ไปจากวัตถุประสงค์</li>
+    <li>Script ใน skill อาจ exfiltrate ข้อมูลหรือโจมตี host</li>
+    <li>การ fetch URL ภายนอกใน skill อาจถูก tamper หลังติดตั้ง</li>
+    <li>Skill ที่มี <code>allowed-tools</code> กว้างๆ จะยกระดับ trust boundary แบบเงียบๆ</li>
+  </ul>
+
+  <h3>มาตรการลดความเสี่ยง</h3>
+  <ul>
+    <li>ติดตั้งจาก <strong>แหล่งที่เชื่อถือได้</strong> เท่านั้น — ของ Anthropic หรือของในองค์กร</li>
+    <li>ตรวจ <strong>ทุกไฟล์</strong> ใน skill: SKILL.md, references, scripts, asset</li>
+    <li>ระวังเป็นพิเศษถ้า skill ดึง URL ภายนอก ตอน runtime</li>
+    <li>ใน Claude Code: <code>allowed-tools</code> ของ project skill ทำงานเฉพาะหลัง trust workspace แล้ว</li>
+    <li>ใช้ <code>disable-model-invocation: true</code> สำหรับคำสั่งที่มีผลข้างเคียง (<code>/deploy</code>, <code>/send-slack</code>) — trigger ต้องเป็นมนุษย์</li>
+    <li>Claude API ไม่มีเครือข่าย — ลด exfiltration ได้บางส่วน. Claude.ai ขึ้นกับ policy ของ admin</li>
+  </ul>
+
+  <h3>Playbook สำหรับทีม</h3>
+  <ol>
+    <li>เลือก workflow <strong>1 เรื่อง</strong> ที่ทีมต้องอธิบายซ้ำๆ</li>
+    <li>เขียน 3 evaluation <em>ก่อน</em> เริ่ม SKILL.md</li>
+    <li>ร่าง SKILL.md ขั้นต่ำ (ไม่เกิน 100 บรรทัด)</li>
+    <li>ลองส่วนตัว (<code>~/.claude/skills/</code> หรือ <code>~/.agents/skills/</code>) — วน eval</li>
+    <li>ย้ายไปที่ project (<code>.claude/skills/</code> หรือ <code>.agents/skills/</code>) — commit เข้า repo</li>
+    <li>เก็บข้อมูลการใช้งาน 2 สัปดาห์ — รวบรวม case ที่พลาด</li>
+    <li>สรุปบทเรียนเข้า wiki — ขยายเป็น plugin หากต้องแชร์ทั้งองค์กร</li>
+  </ol>
+
+  <div class="callout">
+    <h4>หมายเหตุ ZDR</h4>
+    <p>Skill <strong>ยังไม่</strong> รองรับ ZDR ในเดือน พฤษภาคม 2569 อย่าใส่ความรู้ที่ sensitive มากๆ เข้าไปใน skill ที่รันบน surface ที่ไม่ใช่ self-host</p>
+  </div>
+</section>
+
+<!-- Module 12 -->
+<section id="m12" class="module">
+  <div class="num">โมดูล 12</div>
+  <h2>Cheatsheet &amp; แหล่งอ้างอิง</h2>
+  <p class="summary">Checklist คุณภาพหน้าเดียว + ลิงก์ที่จะกลับมาดูเรื่อยๆ</p>
+
+  <h3>Checklist คุณภาพ Skill</h3>
+  <h4>คุณภาพหลัก</h4>
+  <ul>
+    <li>☐ Description: บุรุษที่สาม, ทำอะไร + เมื่อไหร่, มีคำสำคัญ, &lt;1024 ตัวอักษร</li>
+    <li>☐ <code>name</code> ตรงกับชื่อโฟลเดอร์ และตามกฎการตั้งชื่อ</li>
+    <li>☐ SKILL.md body &lt; 500 บรรทัด</li>
+    <li>☐ ไฟล์อ้างอิงพี่น้องลึกแค่ระดับเดียว</li>
+    <li>☐ ไฟล์อ้างอิง &gt; 100 บรรทัด มี Contents block</li>
+    <li>☐ คำศัพท์สม่ำเสมอ</li>
+    <li>☐ ตัวอย่างเป็นรูปธรรม ไม่นามธรรม</li>
+    <li>☐ Workflow มีขั้นตอนชัดและเรียงเลข</li>
+    <li>☐ เนื้อหาที่ผูกกับเวลา ย้ายไปส่วน Legacy</li>
+  </ul>
+
+  <h4>โค้ด &amp; สคริปต์</h4>
+  <ul>
+    <li>☐ สคริปต์จัดการ error เอง ไม่ "punt to Claude"</li>
+    <li>☐ ไม่มี voodoo constant — ทุกตัวเลขมีคำอธิบาย</li>
+    <li>☐ ใช้ forward slash อย่างเดียว</li>
+    <li>☐ ระบุ package ที่ต้องใช้ และยืนยันว่ามีใน runtime</li>
+    <li>☐ มีขั้น validation สำหรับการกระทำที่ destructive</li>
+    <li>☐ ใช้ pattern plan-validate-execute สำหรับ batch operation</li>
+  </ul>
+
+  <h4>การทดสอบ</h4>
+  <ul>
+    <li>☐ Evaluation ≥ 3 ครอบคลุมช่องว่างเดิม</li>
+    <li>☐ ปรับ description ด้วย train/validation split</li>
+    <li>☐ ทดสอบบน Haiku / Sonnet / Opus</li>
+    <li>☐ ผ่าน <code>skills-ref validate</code></li>
+    <li>☐ รับ feedback จากทีมแล้ว</li>
+  </ul>
+
+  <h3>แหล่งข้อมูลทางการ</h3>
+  <ul>
+    <li><a href="https://agentskills.io">agentskills.io</a> — หน้าหลักของ Open Standard</li>
+    <li><a href="https://agentskills.io/specification">Specification</a> — กฎ frontmatter, validation, ไฟล์ layout</li>
+    <li><a href="https://agentskills.io/skill-creation/quickstart">Quickstart</a> — ตัวอย่าง <code>roll-dice</code> ข้าม client</li>
+    <li><a href="https://agentskills.io/skill-creation/optimizing-descriptions">Optimizing skill descriptions</a> — methodology trigger-rate eval</li>
+    <li><a href="https://agentskills.io/client-implementation/adding-skills-support">Adding skills support to your agent</a> — lifecycle 5 ขั้น</li>
+    <li><a href="https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills">Anthropic Engineering — Equipping agents with Skills</a></li>
+    <li><a href="https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices">Skill authoring best practices</a></li>
+    <li><a href="https://code.claude.com/docs/en/skills">Claude Code — Skills</a></li>
+    <li><a href="https://claude.com/blog/skills-explained">Skills vs Prompts vs Projects vs MCP vs Subagents</a></li>
+    <li><a href="https://github.com/anthropics/skills">github.com/anthropics/skills</a> — Skill ทางการของ Anthropic (มี <code>skill-creator</code>)</li>
+    <li><a href="https://github.com/agentskills/agentskills">github.com/agentskills/agentskills</a> — สเปคและ <code>skills-ref</code> SDK</li>
+  </ul>
+
+  <h3>Artefact ภายในโปรเจกต์</h3>
+  <ul>
+    <li><a href="../index.md">Wiki Index</a> — 17 หน้า มี citation</li>
+    <li><a href="../slides/training-en.html">Slide deck (EN)</a> · <a href="../slides/training-th.html">Slide deck (TH)</a></li>
+    <li><a href="course-en.html">English version of this course</a></li>
+  </ul>
+
+  <div class="footer-nav">
+    <a href="#m1">↑ กลับด้านบน</a>
+    <a href="index.html">หน้า Portal →</a>
+  </div>
+</section>
+
+</main>
+</div>
+</body>
+</html>

@@ -1,0 +1,635 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Agent Skills — Technical Deep Dive (EN)</title>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reset.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/black.css" id="theme" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/monokai.css" />
+
+<style>
+  :root {
+    --accent: #d97757;
+    --accent2: #5d8aa8;
+    --muted: #9aa0a6;
+  }
+  .reveal { font-family: "Inter","Segoe UI",system-ui,-apple-system,sans-serif; font-size: 30px; }
+  .reveal h1, .reveal h2, .reveal h3 {
+    font-weight: 600;
+    text-transform: none;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+  }
+  .reveal h1 { color: var(--accent); font-size: 2.2em; }
+  .reveal h2 { color: var(--accent); font-size: 1.35em; margin-bottom: 0.35em; }
+  .reveal h3 { color: var(--accent2); font-size: 1.05em; margin-top: 0.6em; }
+  .reveal section { text-align: left; }
+  .reveal .slides > section, .reveal .slides > section > section {
+    padding: 12px 0;
+  }
+  .reveal .center { text-align: center; }
+  .reveal p { margin: 0.4em 0; line-height: 1.45; }
+  .reveal pre { font-size: 0.46em; box-shadow: none; border-left: 3px solid var(--accent); margin: 0.4em auto; line-height: 1.35; max-width: 100%; }
+  .reveal pre code { padding: 0.6em 0.8em; }
+  .reveal code { background: rgba(217,119,87,0.12); padding: 0 4px; border-radius: 3px; font-size: 0.95em; }
+  .reveal table { font-size: 0.6em; border-collapse: collapse; margin: 0.4em auto; line-height: 1.35; }
+  .reveal th, .reveal td { padding: 5px 10px; border-bottom: 1px solid #444; vertical-align: top; }
+  .reveal th { color: var(--accent); font-weight: 600; }
+  .reveal .muted { color: var(--muted); font-size: 0.78em; line-height: 1.45; }
+  .reveal .pill { display:inline-block; padding: 2px 10px; border-radius: 999px; background: rgba(217,119,87,0.18); color: var(--accent); font-size: 0.6em; margin-right: 6px; }
+  .reveal .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.9em; }
+  .reveal .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.7em; }
+  .reveal .card {
+    background: rgba(255,255,255,0.04);
+    border-left: 3px solid var(--accent2);
+    padding: 0.7em 0.9em;
+    border-radius: 6px;
+    font-size: 0.78em;
+    line-height: 1.45;
+  }
+  .reveal .card h3 { margin: 0 0 0.3em; font-size: 1em; }
+  .reveal .card ul { margin: 0.3em 0 0; padding-left: 1.1em; }
+  .reveal .card p { margin: 0.25em 0; }
+  .reveal .quote {
+    font-style: italic;
+    border-left: 3px solid var(--accent);
+    padding-left: 0.8em;
+    color: #ddd;
+    font-size: 0.85em;
+    margin: 0.5em 0;
+  }
+  .reveal ul, .reveal ol { margin: 0.3em 0; padding-left: 1.2em; }
+  .reveal ul li, .reveal ol li { margin: 0.18em 0; line-height: 1.4; }
+  .reveal .big { font-size: 1.15em; line-height: 1.4; }
+  .footnote { position: absolute; bottom: 14px; left: 0; right: 0; text-align: center; font-size: 0.55em; color: var(--muted); }
+  .badge { font-size: 0.6em; background: var(--accent); color: #111; padding: 2px 8px; border-radius: 4px; }
+</style>
+</head>
+<body>
+<div class="reveal"><div class="slides">
+
+<!-- 1 -->
+<section class="center">
+  <h1>Agent Skills</h1>
+  <h3 style="color: #ddd">Technical deep-dive for engineering teams</h3>
+  <p class="muted">v1 · 2026-05-08 · agentskill-101</p>
+  <p><span class="pill">EN</span><span class="pill">also available in ภาษาไทย</span></p>
+</section>
+
+<!-- 2 -->
+<section>
+  <h2>What you will learn</h2>
+  <ol>
+    <li>What an <strong>Agent Skill</strong> is, technically</li>
+    <li>The <strong>SKILL.md</strong> contract — required + Claude-Code extras</li>
+    <li><strong>Progressive disclosure</strong> — why skills scale</li>
+    <li>Skills vs <strong>MCP</strong> vs <strong>Subagents</strong> — the decision framework</li>
+    <li>Authoring best practices — concise, evaluation-driven</li>
+    <li>Worked examples + a quality checklist you can ship with</li>
+  </ol>
+  <p class="muted">By the end you should be able to write a Skill, decide where it should live, and review one critically.</p>
+</section>
+
+<!-- 3 -->
+<section>
+  <h2>Why we are doing this training</h2>
+  <div class="grid2">
+    <div class="card">
+      <h3>Before Skills</h3>
+      <ul>
+        <li>Re-pasting the same instructions every session</li>
+        <li>CLAUDE.md growing into procedures</li>
+        <li>Custom agents per use case → fragmentation</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>With Skills</h3>
+      <ul>
+        <li>Procedural knowledge captured once</li>
+        <li>Loaded only when relevant — no context bloat</li>
+        <li>Composable across teams, surfaces, organisations</li>
+      </ul>
+    </div>
+  </div>
+  <p class="quote">"Building a skill for an agent is like putting together an onboarding guide for a new hire." — Anthropic Engineering</p>
+</section>
+
+<!-- 4 -->
+<section>
+  <h2>Definition</h2>
+  <p class="big">An <strong>Agent Skill</strong> is an organised <em>folder</em> of instructions, scripts, and resources that an agent can <strong>discover and load dynamically</strong> to perform better on a specific task.</p>
+  <ul>
+    <li>Entrypoint: <code>SKILL.md</code> (YAML frontmatter + markdown)</li>
+    <li>Optional siblings: <code>scripts/</code>, <code>references/</code>, <code>assets/</code></li>
+    <li>Open standard at <code>agentskills.io</code> — Apache 2.0 / CC-BY-4.0</li>
+  </ul>
+</section>
+
+<!-- 4b — Open standard -->
+<section>
+  <h2>An open standard, not just an Anthropic feature</h2>
+  <p class="big">Originally written by Anthropic, released as an open spec, governed via GitHub.</p>
+  <p>One <code>SKILL.md</code> works across all of these (May 2026, partial):</p>
+  <p class="muted" style="font-size:0.7em;line-height:1.7em">
+    Claude Code · Claude.ai · GitHub Copilot · VS Code · OpenAI Codex · Cursor · Gemini CLI · OpenCode · OpenHands · Goose · Letta · Roo Code · Mistral Vibe · Snowflake Cortex Code · Databricks Genie · Spring AI · Laravel Boost · Kiro · Factory · Junie · Amp · Mux · Ona · Workshop · Trae · Piebald · Pi · Emdash · Qodo · VT Code · Command Code · Agentman · Firebender · Google AI Edge Gallery · nanobot · fast-agent · Autohand
+  </p>
+  <p>Spec: <a href="https://agentskills.io/specification">agentskills.io/specification</a> · Ref SDK: <a href="https://github.com/agentskills/agentskills">github.com/agentskills/agentskills</a></p>
+</section>
+
+<!-- 5 -->
+<section>
+  <h2>Anatomy of a Skill</h2>
+<pre><code class="language-text">my-skill/
+├── SKILL.md            # required — entrypoint
+├── reference.md        # loaded only when needed
+├── examples.md         # ditto
+└── scripts/
+    └── helper.py       # executed via bash; source never enters context</code></pre>
+  <p class="muted">Each file has a different "loading time". That timing is the trick.</p>
+</section>
+
+<!-- 6 -->
+<section>
+  <h2>SKILL.md — minimal example</h2>
+<pre><code class="language-yaml">---
+name: pdf-processing
+description: Extract text and tables from PDF files, fill forms,
+  merge documents. Use when working with PDF files or when the
+  user mentions PDFs, forms, or document extraction.
+---
+
+# PDF Processing
+Use pdfplumber for text extraction:
+
+```python
+import pdfplumber
+with pdfplumber.open("file.pdf") as pdf:
+    text = pdf.pages[0].extract_text()
+```
+</code></pre>
+  <p class="muted">Required: <code>name</code>, <code>description</code>. Everything else is body or supporting files.</p>
+</section>
+
+<!-- 7 -->
+<section>
+  <h2>Frontmatter — required fields</h2>
+  <table>
+    <tr><th>Field</th><th>Rule</th></tr>
+    <tr><td><code>name</code></td><td>≤64 chars · lowercase + digits + hyphens · no leading/trailing <code>-</code> · no <code>--</code> · <strong>must match parent dir</strong></td></tr>
+    <tr><td><code>description</code></td><td>non-empty · ≤1024 chars · third person · what + when</td></tr>
+  </table>
+  <p>Open-standard <em>optional</em> fields:</p>
+  <p class="muted">
+    <code>license</code> · <code>compatibility</code> (≤500 chars, e.g. "Requires Python 3.14+ and uv") · <code>metadata</code> (string→string map) · <code>allowed-tools</code> (experimental)
+  </p>
+</section>
+
+<!-- 7b — Claude Code extras -->
+<section>
+  <h2>Claude Code adds extras</h2>
+  <p>On top of the open spec:</p>
+  <p class="muted" style="line-height:1.7em">
+    <code>when_to_use</code> · <code>argument-hint</code> · <code>arguments</code> ·
+    <code>disable-model-invocation</code> · <code>user-invocable</code> ·
+    <code>allowed-tools</code> · <code>model</code> · <code>effort</code> ·
+    <code>context: fork</code> · <code>agent</code> · <code>hooks</code> ·
+    <code>paths</code> · <code>shell</code>
+  </p>
+  <p>Use them for Claude-Code-specific behaviour. Stick to the open subset for cross-client portability.</p>
+</section>
+
+<!-- 8 -->
+<section>
+  <h2>Progressive disclosure</h2>
+  <p>The single idea that lets you install <em>hundreds</em> of skills without drowning the context window.</p>
+  <table>
+    <tr><th>Level</th><th>What loads</th><th>When</th><th>Token cost</th></tr>
+    <tr><td><strong>L1</strong></td><td>name + description</td><td>Always (startup)</td><td>~100 / skill</td></tr>
+    <tr><td><strong>L2</strong></td><td>SKILL.md body</td><td>When triggered</td><td>&lt; 5,000</td></tr>
+    <tr><td><strong>L3+</strong></td><td>Bundled files / scripts</td><td>On demand via bash</td><td>~unlimited</td></tr>
+  </table>
+  <p class="quote">"Files don't consume context until accessed. There is no practical limit on bundled content."</p>
+</section>
+
+<!-- 9 -->
+<section>
+  <h2>What that buys you</h2>
+  <div class="grid2">
+    <div class="card">
+      <h3>Without progressive disclosure</h3>
+      <p>10 skills × ~5k tokens each = 50k tokens of instructions before the user even types.</p>
+    </div>
+    <div class="card">
+      <h3>With progressive disclosure</h3>
+      <p>10 skills × ~100 tokens of metadata = 1k tokens. Only the relevant skill's body loads.</p>
+    </div>
+  </div>
+  <p class="muted">Scripts are even better: their <strong>source never enters context</strong> — only their output.</p>
+</section>
+
+<!-- 10 -->
+<section>
+  <h2>Where Skills run</h2>
+  <table>
+    <tr><th>Surface</th><th>Pre-built</th><th>Custom</th><th>Sharing</th><th>Network</th></tr>
+    <tr><td>Claude API</td><td>✓ (pptx/xlsx/docx/pdf)</td><td>✓ via /v1/skills</td><td>workspace-wide</td><td>none</td></tr>
+    <tr><td>claude.ai</td><td>✓ (built-in)</td><td>✓ ZIP upload</td><td>per user</td><td>policy-controlled</td></tr>
+    <tr><td>Claude Code</td><td>—</td><td>✓ filesystem</td><td>plugin / project / personal</td><td>full</td></tr>
+  </table>
+  <p class="muted">Custom Skills do <strong>not</strong> sync across surfaces — upload separately. Skills are not ZDR-eligible today.</p>
+</section>
+
+<!-- 11 -->
+<section>
+  <h2>API beta headers</h2>
+<pre><code class="language-http">anthropic-beta: code-execution-2025-08-25
+anthropic-beta: skills-2025-10-02
+anthropic-beta: files-api-2025-04-14</code></pre>
+  <ul>
+    <li>Reference a skill via <code>skill_id</code> in the <code>container</code> param.</li>
+    <li>Pre-built ids: <code>pptx</code>, <code>xlsx</code>, <code>docx</code>, <code>pdf</code>.</li>
+    <li>Runtime sandbox has <strong>no network</strong> and no runtime <code>pip install</code>.</li>
+  </ul>
+</section>
+
+<!-- 11b — cross-client convention -->
+<section>
+  <h2>Where to put skills (cross-client)</h2>
+  <table>
+    <tr><th>Scope</th><th>Native (any one client)</th><th><strong>Cross-client</strong></th></tr>
+    <tr><td>Project</td><td><code>&lt;repo&gt;/.&lt;client&gt;/skills/</code></td><td><code>&lt;repo&gt;/.agents/skills/</code></td></tr>
+    <tr><td>User</td><td><code>~/.&lt;client&gt;/skills/</code></td><td><code>~/.agents/skills/</code></td></tr>
+  </table>
+  <p>Drop a skill in <code>.agents/skills/</code> and Copilot, Cursor, Codex, Claude Code, Gemini CLI etc. all see it.</p>
+  <p class="muted">Universal precedence: <strong>project &gt; user</strong>. Many clients also pragmatically scan <code>.claude/skills/</code> for compat.</p>
+</section>
+
+<!-- 12 -->
+<section>
+  <h2>Skills in Claude Code — locations</h2>
+  <table>
+    <tr><th>Where</th><th>Path</th><th>Scope</th></tr>
+    <tr><td>Enterprise</td><td>managed settings</td><td>org-wide</td></tr>
+    <tr><td>Personal</td><td><code>~/.claude/skills/&lt;name&gt;/SKILL.md</code></td><td>all your projects</td></tr>
+    <tr><td>Project</td><td><code>.claude/skills/&lt;name&gt;/SKILL.md</code></td><td>this repo</td></tr>
+    <tr><td>Plugin</td><td><code>&lt;plugin&gt;/skills/&lt;name&gt;/SKILL.md</code></td><td>where plugin enabled</td></tr>
+  </table>
+  <p>Precedence: <strong>enterprise &gt; personal &gt; project</strong>. Plugin skills are namespaced <code>plugin:skill</code>.</p>
+</section>
+
+<!-- 13 -->
+<section>
+  <h2>Skills vs MCP vs Subagents</h2>
+  <p class="big">Different questions, not competing answers.</p>
+  <div class="grid3">
+    <div class="card"><h3>Skill</h3>Procedural know-how Claude needs <strong>repeatably</strong>.<p class="muted">"How do we write a commit?"</p></div>
+    <div class="card"><h3>MCP</h3>Connection to an <strong>external system</strong>.<p class="muted">"Read this Postgres / Slack / GitHub."</p></div>
+    <div class="card"><h3>Subagent</h3>Independent worker with <strong>own context</strong>.<p class="muted">"Spin up a code-review agent on this branch."</p></div>
+  </div>
+</section>
+
+<!-- 14 -->
+<section>
+  <h2>Decision framework</h2>
+<pre><code class="language-text">Need Claude to know HOW to do X repeatably?    → Skill
+Need Claude to ACCESS an external system?       → MCP
+Need work done in ISOLATION with own context?   → Subagent</code></pre>
+  <p class="quote">"A subagent can call a skill that uses MCP — that's the most powerful pattern."</p>
+</section>
+
+<!-- 15 -->
+<section>
+  <h2>Composition example</h2>
+<pre><code class="language-text">main agent
+  └─ subagent: code-reviewer (own context, read-only tools)
+       └─ skill: review-conventions (loaded on demand)
+              └─ MCP: GitHub (fetches PR diff + comments)</code></pre>
+  <p class="muted">Each layer earns its existence. Subagent for isolation, skill for know-how, MCP for access.</p>
+</section>
+
+<!-- 16 -->
+<section>
+  <h2>Authoring — core principles</h2>
+  <ul>
+    <li><strong>Concise is key.</strong> The context window is a public good.</li>
+    <li><strong>Assume Claude is smart.</strong> Only add what Claude doesn't already know.</li>
+    <li><strong>Calibrate degrees of freedom</strong> to task fragility.</li>
+    <li><strong>Test on every model</strong> the skill will run on (Haiku/Sonnet/Opus).</li>
+  </ul>
+  <p class="quote">"Robot on a path: narrow bridge with cliffs → tight instructions. Open field → general direction."</p>
+</section>
+
+<!-- 17 -->
+<section>
+  <h2>Naming and description</h2>
+  <div class="grid2">
+    <div class="card">
+      <h3>Good</h3>
+      <ul>
+        <li><code>processing-pdfs</code> (gerund)</li>
+        <li><code>analyzing-spreadsheets</code></li>
+        <li>"Processes Excel files and generates reports. Use when…"</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Bad</h3>
+      <ul>
+        <li><code>helper</code> / <code>utils</code> / <code>tools</code></li>
+        <li>"I can help you with…" (1st person)</li>
+        <li>"Helps with documents" (vague, no <em>when</em>)</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 18 -->
+<section>
+  <h2>Progressive disclosure patterns</h2>
+  <ol>
+    <li><strong>Pattern 1 — Guide + references.</strong> SKILL.md links to <code>FORMS.md</code>, <code>REFERENCE.md</code>, <code>EXAMPLES.md</code>.</li>
+    <li><strong>Pattern 2 — Domain split.</strong> <code>reference/finance.md</code>, <code>reference/sales.md</code>… load only what's asked about.</li>
+    <li><strong>Pattern 3 — Conditional details.</strong> Show basics inline, link advanced topics only.</li>
+  </ol>
+  <p class="muted">Rule: keep references <strong>one level deep</strong>. Long files (&gt;100 lines) need a Contents block.</p>
+</section>
+
+<!-- 19 -->
+<section>
+  <h2>Workflows + checklists</h2>
+<pre><code class="language-markdown">## PDF form filling workflow
+
+Copy this checklist and check off as you complete:
+
+- [ ] Step 1: Analyze the form (run analyze_form.py)
+- [ ] Step 2: Create field mapping (edit fields.json)
+- [ ] Step 3: Validate mapping (run validate_fields.py)
+- [ ] Step 4: Fill the form (run fill_form.py)
+- [ ] Step 5: Verify output (run verify_output.py)</code></pre>
+  <p>Pattern: <strong>plan → validate → execute</strong>. Catch errors before they happen.</p>
+</section>
+
+<!-- 20 -->
+<section>
+  <h2>Evaluation-driven development</h2>
+  <ol>
+    <li>Identify gaps — run Claude on real tasks <em>without</em> the skill.</li>
+    <li>Build 3 evaluation scenarios.</li>
+    <li>Establish baseline.</li>
+    <li>Write <strong>minimal</strong> SKILL.md.</li>
+    <li>Iterate against the evals.</li>
+  </ol>
+  <p class="quote">"Create evaluations BEFORE writing extensive documentation."</p>
+</section>
+
+<!-- 20b — Description optimization -->
+<section>
+  <h2>Description optimization loop</h2>
+  <p>The <code>description</code> is the <strong>only</strong> trigger. Optimize it like an ML model:</p>
+  <ol>
+    <li>Build ~20 labeled queries: 8-10 should-trigger, 8-10 should-not (near-miss negatives)</li>
+    <li>Split <strong>train (60%)</strong> / <strong>validation (40%)</strong> — keep the split fixed</li>
+    <li>Run each query 3× → <em>trigger rate</em> (pass &gt; 0.5)</li>
+    <li>Iterate description ~5 rounds — fix train failures only</li>
+    <li>Pick the iteration with <strong>best validation pass rate</strong> (not the latest!)</li>
+  </ol>
+  <p class="muted">Anthropic's <code>skill-creator</code> skill automates the whole loop with an HTML report.</p>
+</section>
+
+<!-- 20c — description before/after -->
+<section>
+  <h2>Description: before / after</h2>
+<pre><code class="language-yaml"># Before (too narrow, no when-clause)
+description: Process CSV files.
+
+# After
+description: >
+  Analyze CSV and tabular data files — compute summary statistics,
+  add derived columns, generate charts, and clean messy data. Use this
+  skill when the user has a CSV, TSV, or Excel file and wants to
+  explore, transform, or visualize the data, even if they don't
+  explicitly mention "CSV" or "analysis."</code></pre>
+  <p>Specific about <em>what</em>; broad about <em>when</em>. "Err on the side of being pushy."</p>
+</section>
+
+<!-- 21 -->
+<section>
+  <h2>Claude A / Claude B authoring loop</h2>
+  <div class="grid2">
+    <div class="card">
+      <h3>Claude A — author</h3>
+      <p>Helps you draft and refine the skill. Knows the format natively.</p>
+    </div>
+    <div class="card">
+      <h3>Claude B — user</h3>
+      <p>Fresh instance with the skill loaded. Reveals gaps through real usage.</p>
+    </div>
+  </div>
+  <p class="muted">You observe Claude B → bring findings back to Claude A → repeat.</p>
+</section>
+
+<!-- 22 -->
+<section>
+  <h2>Claude Code — superpowers</h2>
+  <ul>
+    <li><code>!`git diff HEAD`</code> — <strong>dynamic context injection</strong> before Claude sees the prompt.</li>
+    <li><code>context: fork</code> — run the skill in a <strong>subagent</strong> with its own tool set.</li>
+    <li><code>allowed-tools: Bash(git add *) ...</code> — pre-approve tools, no per-call prompts.</li>
+    <li><code>disable-model-invocation: true</code> — make a skill <strong>user-only</strong> for risky actions.</li>
+    <li><code>${CLAUDE_SKILL_DIR}</code> — portable script paths regardless of CWD.</li>
+  </ul>
+</section>
+
+<!-- 23 -->
+<section>
+  <h2>Worked example #1 — <code>/summarize-changes</code></h2>
+<pre><code class="language-yaml">---
+description: Summarizes uncommitted changes and flags anything risky.
+  Use when the user asks what changed, wants a commit message,
+  or asks to review their diff.
+---
+
+## Current changes
+!`git diff HEAD`
+
+## Instructions
+Summarize the changes above in two or three bullet points,
+then list risks (missing error handling, hardcoded values,
+tests that need updating). If empty, say so.
+</code></pre>
+  <p class="muted">Diff is inlined <em>before</em> Claude reads the skill — grounded in reality, not guesses.</p>
+</section>
+
+<!-- 24 -->
+<section>
+  <h2>Worked example #2 — locked-down <code>/deploy</code></h2>
+<pre><code class="language-yaml">---
+name: deploy
+description: Deploy the application to production
+disable-model-invocation: true
+allowed-tools: Bash(./scripts/deploy *) Bash(git push *)
+---
+
+Deploy $ARGUMENTS to production:
+1. Run the test suite
+2. Build the application
+3. Push to the deployment target
+4. Verify the deployment succeeded
+</code></pre>
+  <ul>
+    <li>Only the <strong>user</strong> can trigger deploy.</li>
+    <li>Tools are pre-approved, but only those tools.</li>
+  </ul>
+</section>
+
+<!-- 25 -->
+<section>
+  <h2>Worked example #3 — <code>codebase-visualizer</code></h2>
+<pre><code class="language-yaml">---
+name: codebase-visualizer
+description: Generate an interactive collapsible tree visualization
+  of your codebase. Use when exploring a new repo, understanding
+  project structure, or identifying large files.
+allowed-tools: Bash(python3 *)
+---
+
+python3 ${CLAUDE_SKILL_DIR}/scripts/visualize.py .</code></pre>
+  <ul>
+    <li>Bundles a Python script that emits an HTML tree view.</li>
+    <li>Skill is the <em>orchestrator</em>; the script does the work.</li>
+    <li>This pattern works for <strong>any visual output</strong>: dep graphs, coverage reports, schemas.</li>
+  </ul>
+</section>
+
+<!-- 25b — skills-ref validator -->
+<section>
+  <h2>Validate before you ship</h2>
+  <p>Use the official reference SDK:</p>
+<pre><code class="language-bash">skills-ref validate ./my-skill</code></pre>
+  <p>Catches:</p>
+  <ul>
+    <li><code>name</code> / parent-directory mismatch</li>
+    <li>Bad characters or length in <code>name</code> / <code>description</code></li>
+    <li>Malformed YAML</li>
+    <li>Constraints on optional fields (<code>compatibility</code>, <code>metadata</code>)</li>
+  </ul>
+  <p class="muted">Also useful as a parser to embed if you're building a Skills client. Repo: <a href="https://github.com/agentskills/agentskills">github.com/agentskills/agentskills</a></p>
+</section>
+
+<!-- 26 -->
+<section>
+  <h2>Security model</h2>
+  <p class="big">Treat installing a Skill like installing software.</p>
+  <ul>
+    <li>Skills run in a VM with filesystem + bash + code execution.</li>
+    <li>A malicious skill can redirect tool use, exfiltrate data, install backdoors.</li>
+    <li>Audit every bundled file: SKILL.md, scripts, assets.</li>
+    <li>External-URL fetches inside skills are <strong>especially risky</strong>.</li>
+    <li>Use <code>disable-model-invocation</code> for any side-effect command.</li>
+    <li>Project skills' <code>allowed-tools</code> only activates after workspace trust.</li>
+  </ul>
+</section>
+
+<!-- 27 -->
+<section>
+  <h2>Anti-patterns to avoid</h2>
+  <ul>
+    <li>Windows-style paths (<code>scripts\helper.py</code>) — always use forward slashes.</li>
+    <li>"Voodoo constants" — every magic number documented or it's a bug waiting to happen.</li>
+    <li>"Punt-to-Claude" error handling — solve in the script, not in the prompt.</li>
+    <li>Three valid alternatives — give one default + an escape hatch.</li>
+    <li>Time-sensitive instructions — push deprecated content into a "legacy" section.</li>
+    <li>Mixed terminology — pick one term ("field" / "endpoint") and stick with it.</li>
+  </ul>
+</section>
+
+<!-- 28 -->
+<section>
+  <h2>Skill quality checklist</h2>
+  <div class="grid2">
+    <div class="card">
+      <h3>Core quality</h3>
+      <ul>
+        <li>☐ Description: third person, what + when, key terms</li>
+        <li>☐ SKILL.md body &lt; 500 lines</li>
+        <li>☐ References one level deep</li>
+        <li>☐ Consistent terminology</li>
+        <li>☐ Concrete examples</li>
+        <li>☐ Workflows have clear steps</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Code &amp; testing</h3>
+      <ul>
+        <li>☐ Scripts handle their own errors</li>
+        <li>☐ No voodoo constants</li>
+        <li>☐ Forward-slash paths only</li>
+        <li>☐ Validation steps for critical ops</li>
+        <li>☐ ≥3 evals; tested on Haiku/Sonnet/Opus</li>
+        <li>☐ Team feedback incorporated</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 29 -->
+<section>
+  <h2>Rollout playbook for your team</h2>
+  <ol>
+    <li>Pick <strong>one</strong> repeating workflow your team explains over and over.</li>
+    <li>Write 3 evaluations <strong>before</strong> any SKILL.md.</li>
+    <li>Draft a minimal SKILL.md (lt;100 lines).</li>
+    <li>Try it personally (<code>~/.claude/skills/</code>); iterate against evals.</li>
+    <li>Promote to the project (<code>.claude/skills/</code>); commit it.</li>
+    <li>Run a 2-week observation window — collect failure cases.</li>
+    <li>Crystallise lessons into the wiki, then expand to a plugin if shared org-wide.</li>
+  </ol>
+</section>
+
+<!-- 30 -->
+<section class="center">
+  <h2>Resources</h2>
+  <ul style="display:inline-block;text-align:left">
+    <li><a href="https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills">Anthropic — Equipping agents with Skills</a></li>
+    <li><a href="https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview">Platform docs — Skills overview</a></li>
+    <li><a href="https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices">Skill authoring best practices</a></li>
+    <li><a href="https://code.claude.com/docs/en/skills">Claude Code — Skills</a></li>
+    <li><a href="https://claude.com/blog/skills-explained">Skills vs Prompts vs Projects vs MCP vs Subagents</a></li>
+    <li><a href="https://github.com/anthropics/skills">github.com/anthropics/skills</a> — official skill examples</li>
+    <li><a href="https://agentskills.io">agentskills.io</a> — open standard home</li>
+    <li><a href="https://agentskills.io/specification">agentskills.io/specification</a> — formal spec</li>
+    <li><a href="https://agentskills.io/skill-creation/optimizing-descriptions">Optimizing skill descriptions</a></li>
+    <li><a href="https://agentskills.io/client-implementation/adding-skills-support">Adding skills support to your agent</a></li>
+    <li><a href="https://github.com/agentskills/agentskills">github.com/agentskills/agentskills</a> — reference SDK <code>skills-ref</code></li>
+  </ul>
+  <p class="muted">All claims in this deck are cited inside the wiki under <code>wiki-root/wiki/</code>.</p>
+</section>
+
+<!-- 31 -->
+<section class="center">
+  <h1>Questions?</h1>
+  <p class="muted">agentskill-101 · 2026-05-08</p>
+</section>
+
+</div></div>
+
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/highlight.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/notes/notes.js"></script>
+<script>
+  Reveal.initialize({
+    hash: true,
+    slideNumber: 'c/t',
+    transition: 'slide',
+    width: 1280,
+    height: 800,
+    margin: 0.06,
+    minScale: 0.2,
+    maxScale: 1.8,
+    plugins: [ RevealHighlight, RevealNotes ]
+  });
+</script>
+</body>
+</html>
