@@ -125,6 +125,22 @@ your-course/
 └── graph/                  # Entity + edge JSONL
 ```
 
+## Sub-skills (each phase has a dedicated skill)
+
+This skill is the **orchestrator**. Each phase below has a focused sub-skill
+that handles its mechanics. When you reach that phase, hand off:
+
+| Phase | Sub-skill | What it does |
+|---|---|---|
+| 4 | `/llm-wiki` | URL → raw → wiki pages with citations |
+| 7 | [`generating-reveal-deck`](../generating-reveal-deck/SKILL.md) | reveal.js HTML deck (canvas 1280×800, density rules) |
+| 8 | [`translating-to-thai-technical`](../translating-to-thai-technical/SKILL.md) | EN → TH mirror with code/term-en preservation |
+| 9 | [`adding-theme-toggle`](../adding-theme-toggle/SKILL.md) | dark/light toggle with FOUC prevention |
+| 10 | [`deploying-to-github-pages`](../deploying-to-github-pages/SKILL.md) | git → gh repo → Pages → smoke test |
+
+The sub-skills also work independently — invoke them outside this pipeline
+when you only need one piece (e.g. adding theme toggle to an existing site).
+
 ## Detailed references
 
 - [PIPELINE.md](references/PIPELINE.md) — full phase-by-phase walkthrough

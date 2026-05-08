@@ -1,0 +1,85 @@
+/*
+ * Theme variables — paste into your <style> block, replacing the existing :root.
+ *
+ * The accent values here are the project's design system. Override per-skill if needed,
+ * but stay within the same hue family so cross-page navigation feels cohesive.
+ */
+
+:root, [data-theme="dark"] {
+  /* Surfaces */
+  --bg: #0b0d12;
+  --bg-2: #0f1116;
+  --panel: #161922;
+  --panel-2: #1c2030;
+
+  /* Accent (orange) */
+  --accent: #d97757;
+  --accent-glow: rgba(217,119,87,0.35);
+  --accent-on: #1a0f08;        /* readable text on accent button */
+
+  /* Secondary accents */
+  --accent-2: #5d8aa8;          /* blue */
+  --accent-3: #6dba88;          /* green — for "ok" / lab callouts */
+
+  /* Text */
+  --text: #e8ecf2;
+  --muted: #8a93a3;
+  --muted-2: #5d6371;
+
+  /* Borders & overlays */
+  --border: rgba(255,255,255,0.06);
+  --border-2: rgba(255,255,255,0.10);
+  --soft-1: rgba(255,255,255,0.04);
+  --soft-2: rgba(255,255,255,0.06);
+  --soft-3: rgba(255,255,255,0.12);
+
+  /* Sticky nav background (semi-transparent over body) */
+  --nav-bg: rgba(11,13,18,0.85);
+
+  /* Hero text gradient (for h1 with linear-gradient text-fill) */
+  --hero-text-1: #ffffff;
+  --hero-text-2: #b8c1d0;
+
+  /* Hero ambient glow tints */
+  --hero-glow-1: rgba(217,119,87,0.18);
+  --hero-glow-2: rgba(93,138,168,0.18);
+
+  /* Code blocks */
+  --code-bg: #11141a;
+  --code-text: #d8e0eb;
+}
+
+[data-theme="light"] {
+  --bg: #fafbfc;
+  --bg-2: #ffffff;
+  --panel: #ffffff;
+  --panel-2: #f4f6fa;
+
+  --accent: #c95a30;            /* slightly darker orange for contrast on white */
+  --accent-glow: rgba(201,90,48,0.22);
+  --accent-on: #ffffff;         /* white text on orange button in light mode */
+
+  --accent-2: #2f6494;
+  --accent-3: #3e8e5e;
+
+  --text: #1a1d27;
+  --muted: #58607a;
+  --muted-2: #7a8298;
+
+  --border: rgba(0,0,0,0.08);
+  --border-2: rgba(0,0,0,0.14);
+  --soft-1: rgba(0,0,0,0.03);
+  --soft-2: rgba(0,0,0,0.05);
+  --soft-3: rgba(0,0,0,0.08);
+
+  --nav-bg: rgba(255,255,255,0.85);
+
+  --hero-text-1: #1a1d27;
+  --hero-text-2: #4a5165;
+
+  --hero-glow-1: rgba(201,90,48,0.10);
+  --hero-glow-2: rgba(47,100,148,0.10);
+
+  --code-bg: #f4f6fa;
+  --code-text: #1a1d27;
+}
