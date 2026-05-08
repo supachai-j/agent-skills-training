@@ -43,9 +43,9 @@ _(populated after lint/crystallize)_
 
 ## Training portal
 
-- [Portal home](web/index.html) — bilingual landing page with cards to course, slides, wiki
-- [Self-paced course (EN)](web/course-en.html) — 12-module long-form
-- [Self-paced course (TH)](web/course-th.html) — 12-module long-form
+- [Portal home](index.html) — bilingual landing page with cards to course, slides, wiki
+- [Self-paced course (EN)](course-en.html) — 12-module long-form
+- [Self-paced course (TH)](course-th.html) — 12-module long-form
 
 ## Slides
 

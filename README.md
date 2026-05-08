@@ -8,15 +8,16 @@ A self-paced engineering training on the **[Agent Skills](https://agentskills.io
 
 | Path | What it is |
 |---|---|
-| [`wiki-root/web/index.html`](wiki-root/web/index.html) | Bilingual portal landing page |
-| [`wiki-root/web/course-en.html`](wiki-root/web/course-en.html) | 12-module self-paced course (English, ~45 min read) |
-| [`wiki-root/web/course-th.html`](wiki-root/web/course-th.html) | 12-module self-paced course (ภาษาไทย) |
-| [`wiki-root/slides/training-en.html`](wiki-root/slides/training-en.html) | reveal.js deck for instructor-led sessions (EN) |
-| [`wiki-root/slides/training-th.html`](wiki-root/slides/training-th.html) | reveal.js deck (TH) |
-| [`wiki-root/wiki/`](wiki-root/wiki/) | 17 cited wiki pages — source of truth for all training content |
-| [`wiki-root/raw/`](wiki-root/raw/) | Captured primary sources (Anthropic docs, agentskills.io) |
-| [`wiki-root/graph/`](wiki-root/graph/) | Knowledge graph (entities + edges, JSONL) |
-| [`wiki-root/SCHEMA.md`](wiki-root/SCHEMA.md) | The wiki's domain schema (fields, relations, lint rules) |
+| [`index.html`](index.html) | Bilingual portal landing page |
+| [`course-en.html`](course-en.html) | 12-module self-paced course (English, ~45 min read) |
+| [`course-th.html`](course-th.html) | 12-module self-paced course (ภาษาไทย) |
+| [`slides/training-en.html`](slides/training-en.html) | reveal.js deck for instructor-led sessions (EN) |
+| [`slides/training-th.html`](slides/training-th.html) | reveal.js deck (TH) |
+| [`wiki/`](wiki/) | 17 cited wiki pages — source of truth for all training content |
+| [`raw/`](raw/) | Captured primary sources (Anthropic docs, agentskills.io) |
+| [`graph/`](graph/) | Knowledge graph (entities + edges, JSONL) |
+| [`SCHEMA.md`](SCHEMA.md) | The wiki's domain schema (fields, relations, lint rules) |
+| [`wiki-index.md`](wiki-index.md) | Wiki catalogue with links to every page |
 
 ## Topics covered
 
@@ -31,7 +32,7 @@ A self-paced engineering training on the **[Agent Skills](https://agentskills.io
 
 ## Running locally
 
-Open `wiki-root/web/index.html` in any browser. No build step. External dependencies are loaded from CDNs (Google Fonts, reveal.js).
+Open `index.html` in any browser. No build step. External dependencies are loaded from CDNs (Google Fonts, reveal.js).
 
 ## License
 

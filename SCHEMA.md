@@ -90,4 +90,4 @@ When the LLM hits a case this schema doesn't cover:
 
 ## 11. Training-deck rules (project-specific)
 
-This wiki feeds two HTML training decks (English + Thai) under `wiki-root/slides/`. Ingest rule: when a page is updated with a new "deck-worthy" claim, mark the claim with `tag: deck` so Crystallize can find it.
+This wiki feeds two HTML training decks (English + Thai) under `slides/`. Ingest rule: when a page is updated with a new "deck-worthy" claim, mark the claim with `tag: deck` so Crystallize can find it.
