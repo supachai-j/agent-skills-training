@@ -3,236 +3,737 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Agent Skills 101 — Training Portal</title>
+<title>Agent Skills 101 — Master the open standard for AI agent capabilities</title>
+<meta name="description" content="Self-paced bilingual (EN/TH) engineering training on the Agent Skills open standard. From SKILL.md anatomy to authoring, evaluation, and cross-client deployment." />
+<meta property="og:title" content="Agent Skills 101 — Technical Deep Dive" />
+<meta property="og:description" content="Bilingual training on Anthropic's Agent Skills open standard. Wiki, slides, and self-paced course." />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://supachai-j.github.io/agent-skills-training/" />
+
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Thai:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Thai:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
 <style>
   :root {
-    --bg: #0f1116;
-    --panel: #181b22;
-    --panel-2: #1f242d;
+    --bg: #0b0d12;
+    --bg-2: #0f1116;
+    --panel: #161922;
+    --panel-2: #1c2030;
     --accent: #d97757;
+    --accent-glow: rgba(217,119,87,0.35);
     --accent-2: #5d8aa8;
+    --accent-3: #6dba88;
     --muted: #8a93a3;
+    --muted-2: #5d6371;
     --text: #e8ecf2;
     --border: rgba(255,255,255,0.06);
-    --shadow: 0 8px 30px rgba(0,0,0,0.35);
+    --border-2: rgba(255,255,255,0.10);
   }
   * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
   html, body { margin: 0; padding: 0; }
   body {
     font-family: "Inter", "Noto Sans Thai", "Segoe UI", system-ui, -apple-system, sans-serif;
     background: var(--bg);
     color: var(--text);
     line-height: 1.6;
-    min-height: 100vh;
+    overflow-x: hidden;
   }
   a { color: var(--accent); text-decoration: none; }
   a:hover { text-decoration: underline; }
-  code, pre { font-family: "JetBrains Mono", "Menlo", monospace; }
+  code { font-family: "JetBrains Mono", "Menlo", monospace; }
 
-  .container { max-width: 1100px; margin: 0 auto; padding: 56px 24px 96px; }
-
-  header.hero {
-    text-align: center;
-    padding: 32px 0 56px;
+  /* ================ NAV ================ */
+  nav.top {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(11,13,18,0.85);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--border);
   }
-  .pill {
-    display: inline-block;
-    padding: 4px 14px;
-    border-radius: 999px;
-    background: rgba(217,119,87,0.15);
+  nav.top .inner {
+    max-width: 1200px; margin: 0 auto; padding: 14px 24px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  nav.top .brand {
+    font-weight: 700; letter-spacing: -0.01em;
+    font-size: 0.95em;
+  }
+  nav.top .brand .dot { color: var(--accent); }
+  nav.top .links { display: flex; gap: 22px; align-items: center; font-size: 0.88em; }
+  nav.top .links a { color: var(--muted); }
+  nav.top .links a:hover { color: var(--text); text-decoration: none; }
+  nav.top .cta {
+    background: var(--accent); color: #1a0f08 !important;
+    padding: 8px 16px; border-radius: 8px; font-weight: 600;
+  }
+  nav.top .cta:hover { background: #e88563; text-decoration: none; }
+  @media (max-width: 720px) {
+    nav.top .links { gap: 14px; }
+    nav.top .links .hide-sm { display: none; }
+  }
+
+  /* ================ HERO ================ */
+  .hero {
+    position: relative;
+    padding: 96px 24px 80px;
+    text-align: center;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: "";
+    position: absolute; inset: -10% -20% 30% -20%;
+    background:
+      radial-gradient(ellipse 60% 50% at 30% 20%, rgba(217,119,87,0.18), transparent 60%),
+      radial-gradient(ellipse 60% 50% at 70% 30%, rgba(93,138,168,0.18), transparent 60%);
+    filter: blur(20px);
+    pointer-events: none;
+    z-index: 0;
+  }
+  .hero > * { position: relative; z-index: 1; }
+  .hero .badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 6px 14px; border-radius: 999px;
+    background: rgba(217,119,87,0.12);
+    border: 1px solid rgba(217,119,87,0.3);
     color: var(--accent);
     font-size: 0.78em;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    margin-bottom: 16px;
+    margin-bottom: 22px;
   }
-  h1 {
-    font-size: clamp(2rem, 4vw, 3rem);
-    font-weight: 700;
-    margin: 0 0 12px;
-    letter-spacing: -0.02em;
+  .hero .badge .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); animation: pulse 2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+  .hero h1 {
+    font-size: clamp(2.4rem, 6vw, 4.4rem);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -0.025em;
+    margin: 0 0 14px;
+    background: linear-gradient(180deg, #ffffff 30%, #b8c1d0 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
-  .h1-th { font-size: clamp(1.6rem, 3.4vw, 2.4rem); margin: 0; color: var(--muted); font-weight: 500; }
-  .subtitle { color: var(--muted); font-size: 1.05em; max-width: 720px; margin: 18px auto 0; }
-
-  .section-label {
+  .hero h1 .accent {
+    background: linear-gradient(135deg, #d97757 0%, #e89e7a 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .hero .h1-th {
+    font-size: clamp(1.1rem, 2.5vw, 1.5rem);
     color: var(--muted);
-    font-size: 0.78em;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    margin: 48px 0 18px;
-    padding-left: 6px;
+    font-weight: 500;
+    margin: 0 0 8px;
+    font-family: "Noto Sans Thai", "Inter", sans-serif;
   }
+  .hero .lede {
+    max-width: 720px; margin: 24px auto 36px;
+    font-size: clamp(1.05rem, 1.5vw, 1.2rem);
+    color: var(--muted);
+    line-height: 1.6;
+  }
+  .hero .ctas { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 14px 24px; border-radius: 10px;
+    font-weight: 600; font-size: 0.95em;
+    border: 1px solid transparent;
+    transition: transform .12s ease, background .12s ease, border-color .12s ease;
+  }
+  .btn:hover { text-decoration: none; transform: translateY(-1px); }
+  .btn.primary {
+    background: var(--accent); color: #1a0f08;
+    box-shadow: 0 8px 30px var(--accent-glow);
+  }
+  .btn.primary:hover { background: #e88563; }
+  .btn.ghost {
+    background: rgba(255,255,255,0.04);
+    color: var(--text);
+    border-color: var(--border-2);
+  }
+  .btn.ghost:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.18); }
+  .btn .arrow { font-size: 1.1em; }
+  .hero .meta-row {
+    display: flex; flex-wrap: wrap; gap: 20px; justify-content: center;
+    margin-top: 36px; font-size: 0.85em; color: var(--muted-2);
+  }
+  .hero .meta-row span { display: inline-flex; gap: 6px; align-items: center; }
+  .hero .meta-row .ok { color: var(--accent-3); }
 
-  .grid { display: grid; gap: 18px; }
-  .grid-2 { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
-  .grid-3 { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
-
-  .card {
+  /* ================ STATS ================ */
+  .stats {
+    max-width: 1080px; margin: 0 auto; padding: 24px;
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
+  }
+  .stat {
     background: var(--panel);
     border: 1px solid var(--border);
     border-radius: 14px;
-    padding: 24px 22px;
-    transition: transform .18s ease, border-color .18s ease, background .18s ease;
+    padding: 24px 20px;
+    text-align: center;
+  }
+  .stat .num {
+    font-size: 2.4rem; font-weight: 700; letter-spacing: -0.02em;
+    color: var(--accent);
+    font-feature-settings: "tnum";
+  }
+  .stat .label { color: var(--muted); font-size: 0.85em; margin-top: 4px; }
+  @media (max-width: 720px) { .stats { grid-template-columns: repeat(2, 1fr); } }
+
+  /* ================ SECTION ================ */
+  section.block { max-width: 1100px; margin: 0 auto; padding: 80px 24px; }
+  .section-label {
+    display: inline-block;
+    color: var(--accent); font-size: 0.78em;
+    letter-spacing: 0.16em; text-transform: uppercase;
+    font-weight: 600; margin-bottom: 14px;
+  }
+  h2.section-title {
+    font-size: clamp(1.8rem, 3.5vw, 2.4rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin: 0 0 12px;
+    line-height: 1.2;
+  }
+  .section-th {
+    color: var(--muted); font-size: 1.05em; margin: 0 0 32px;
+    font-family: "Noto Sans Thai", "Inter", sans-serif;
+  }
+
+  /* ================ WHY ================ */
+  .why { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+  .why .col {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 32px;
+  }
+  .why .col h3 {
+    font-size: 1.2rem; margin: 0 0 14px; font-weight: 600;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .why .col.before h3 { color: var(--muted); }
+  .why .col.after h3 { color: var(--accent); }
+  .why .col h3 .icon {
+    width: 28px; height: 28px; border-radius: 8px;
+    display: inline-grid; place-items: center;
+    font-size: 0.9em;
+  }
+  .why .col.before h3 .icon { background: rgba(255,255,255,0.06); }
+  .why .col.after h3 .icon { background: rgba(217,119,87,0.15); color: var(--accent); }
+  .why .col ul { margin: 0; padding-left: 20px; color: var(--muted); }
+  .why .col ul li { margin: 8px 0; }
+  .why .col.after ul li { color: var(--text); }
+  @media (max-width: 720px) { .why { grid-template-columns: 1fr; } }
+
+  /* ================ FEATURES ================ */
+  .features {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px;
+  }
+  .feature {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 28px;
+    transition: border-color .15s ease, transform .15s ease;
+  }
+  .feature:hover { border-color: rgba(217,119,87,0.3); transform: translateY(-2px); }
+  .feature .ico {
+    width: 44px; height: 44px; border-radius: 10px;
+    background: linear-gradient(135deg, rgba(217,119,87,0.18), rgba(93,138,168,0.18));
+    border: 1px solid var(--border-2);
+    display: grid; place-items: center;
+    font-size: 1.3em;
+    margin-bottom: 16px;
+  }
+  .feature h3 { margin: 0 0 8px; font-size: 1.1rem; font-weight: 600; }
+  .feature p { margin: 0; color: var(--muted); font-size: 0.95em; line-height: 1.55; }
+  @media (max-width: 900px) { .features { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 600px) { .features { grid-template-columns: 1fr; } }
+
+  /* ================ CODE PREVIEW ================ */
+  .code-preview {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: center;
+  }
+  .code-preview .text h3 {
+    font-size: 1.4rem; margin: 0 0 12px; font-weight: 600;
+  }
+  .code-preview .text p {
+    color: var(--muted); margin: 0 0 16px; line-height: 1.65;
+  }
+  .code-preview .code {
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+  }
+  .code-preview .code-head {
+    background: var(--panel);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 16px;
+    display: flex; align-items: center; gap: 10px;
+    font-size: 0.78em; color: var(--muted);
+    font-family: "JetBrains Mono", monospace;
+  }
+  .code-preview .code-head .dots { display: flex; gap: 5px; }
+  .code-preview .code-head .dot { width: 11px; height: 11px; border-radius: 50%; background: rgba(255,255,255,0.12); }
+  .code-preview .code pre {
+    margin: 0; padding: 20px; overflow-x: auto;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.82em; line-height: 1.6;
+    color: #d8e0eb;
+  }
+  .code-preview .code .k { color: var(--accent); }
+  .code-preview .code .s { color: var(--accent-3); }
+  .code-preview .code .c { color: var(--muted-2); font-style: italic; }
+  @media (max-width: 800px) { .code-preview { grid-template-columns: 1fr; } }
+
+  /* ================ COURSE CARDS ================ */
+  .start-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 18px; }
+  .start-grid.three { grid-template-columns: repeat(3, 1fr); }
+  .start-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 26px 24px;
     color: var(--text);
     text-decoration: none;
+    transition: transform .15s ease, border-color .15s ease, background .15s ease;
     display: block;
   }
-  .card:hover {
+  .start-card:hover {
     transform: translateY(-2px);
-    border-color: rgba(217,119,87,0.4);
     background: var(--panel-2);
+    border-color: rgba(217,119,87,0.3);
     text-decoration: none;
   }
-  .card .lang-tag {
+  .start-card .lang {
     display: inline-block;
     background: rgba(217,119,87,0.15);
     color: var(--accent);
-    font-size: 0.7em;
-    padding: 2px 10px;
-    border-radius: 999px;
-    margin-bottom: 10px;
-    letter-spacing: 0.04em;
+    font-size: 0.7em; padding: 3px 10px; border-radius: 999px;
+    margin-bottom: 12px; letter-spacing: 0.04em; font-weight: 600;
   }
-  .card .lang-tag.alt { background: rgba(93,138,168,0.15); color: var(--accent-2); }
-  .card h3 { margin: 6px 0 6px; font-size: 1.15em; font-weight: 600; }
-  .card .h3-th { color: var(--muted); font-weight: 400; font-size: 0.92em; margin: 0 0 12px; }
-  .card p { margin: 0; color: var(--muted); font-size: 0.92em; }
-  .card .arrow { color: var(--accent); margin-top: 14px; font-size: 0.85em; }
+  .start-card .lang.alt { background: rgba(93,138,168,0.15); color: var(--accent-2); }
+  .start-card h3 { margin: 4px 0 4px; font-size: 1.15em; font-weight: 600; }
+  .start-card .h3-sub { color: var(--muted); font-size: 0.88em; margin: 0 0 12px; }
+  .start-card p { margin: 0; color: var(--muted); font-size: 0.92em; line-height: 1.55; }
+  .start-card .arrow { color: var(--accent); margin-top: 14px; font-size: 0.88em; }
+  @media (max-width: 720px) {
+    .start-grid, .start-grid.three { grid-template-columns: 1fr; }
+  }
 
-  .kicker {
-    background: linear-gradient(135deg, rgba(217,119,87,0.08), rgba(93,138,168,0.08));
+  /* ================ ECOSYSTEM ================ */
+  .eco-wrap {
+    background: linear-gradient(135deg, rgba(217,119,87,0.06), rgba(93,138,168,0.06));
     border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 28px 26px;
-    margin-top: 36px;
-  }
-  .kicker h2 { margin: 0 0 8px; font-size: 1.3em; }
-  .kicker .h2-th { margin: 0 0 12px; color: var(--muted); font-weight: 500; font-size: 1.05em; }
-  .kicker ul { margin: 14px 0 0 18px; padding: 0; color: var(--text); }
-  .kicker li { margin: 6px 0; }
-  .kicker .muted-li { color: var(--muted); font-size: 0.92em; }
-
-  footer {
-    margin-top: 64px;
+    border-radius: 18px;
+    padding: 36px 28px;
     text-align: center;
-    color: var(--muted);
-    font-size: 0.85em;
-    border-top: 1px solid var(--border);
-    padding-top: 24px;
   }
-
-  /* Bilingual badge in hero */
-  .lang-badges { margin-top: 10px; }
-  .lang-badges span {
+  .eco-wrap h3 {
+    font-size: 1.3rem; margin: 0 0 8px; font-weight: 600;
+  }
+  .eco-wrap .sub { color: var(--muted); margin: 0 0 24px; font-size: 0.95em; }
+  .eco-wrap .count {
     display: inline-block;
-    margin: 0 4px;
-    font-size: 0.78em;
     color: var(--accent);
-    border: 1px solid rgba(217,119,87,0.3);
-    border-radius: 999px;
-    padding: 2px 12px;
+    font-weight: 700; font-size: 1.05em;
   }
+  .eco-pills {
+    display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;
+  }
+  .eco-pill {
+    padding: 6px 12px; border-radius: 999px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    color: var(--muted); font-size: 0.82em;
+    font-weight: 500;
+    transition: color .15s, border-color .15s, background .15s;
+  }
+  .eco-pill:hover { color: var(--text); border-color: var(--accent); background: rgba(217,119,87,0.06); }
+  .eco-pill.featured { color: var(--accent); border-color: rgba(217,119,87,0.4); background: rgba(217,119,87,0.08); }
 
-  @media (max-width: 640px) {
-    .container { padding: 32px 18px 64px; }
+  /* ================ HOW IT WORKS ================ */
+  .how {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 40px 32px;
   }
+  .how-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 28px; }
+  .how-step {
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 22px 20px;
+    position: relative;
+  }
+  .how-step .lvl {
+    color: var(--accent); font-weight: 700; font-size: 0.78em;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .how-step h4 { margin: 0 0 6px; font-size: 1.05em; font-weight: 600; }
+  .how-step p { margin: 0 0 8px; color: var(--muted); font-size: 0.88em; line-height: 1.55; }
+  .how-step .cost {
+    display: inline-block; font-family: "JetBrains Mono", monospace;
+    font-size: 0.78em; color: var(--accent-3);
+    background: rgba(109,186,136,0.08);
+    padding: 2px 8px; border-radius: 4px;
+  }
+  @media (max-width: 720px) { .how-grid { grid-template-columns: 1fr; } }
+
+  /* ================ FINAL CTA ================ */
+  .final-cta {
+    text-align: center;
+    padding: 80px 24px;
+    background: linear-gradient(180deg, transparent 0%, rgba(217,119,87,0.04) 100%);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .final-cta h2 {
+    font-size: clamp(1.8rem, 4vw, 2.6rem);
+    margin: 0 0 12px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  .final-cta p { color: var(--muted); margin: 0 0 32px; font-size: 1.05em; }
+  .final-cta .ctas { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+
+  /* ================ FOOTER ================ */
+  footer {
+    max-width: 1100px; margin: 0 auto; padding: 40px 24px 60px;
+    color: var(--muted); font-size: 0.88em;
+    display: flex; flex-wrap: wrap; gap: 20px;
+    justify-content: space-between; align-items: center;
+  }
+  footer .links { display: flex; gap: 22px; flex-wrap: wrap; }
+  footer .links a { color: var(--muted); }
+  footer .links a:hover { color: var(--text); }
+  footer .built { color: var(--muted-2); font-size: 0.92em; }
 </style>
 </head>
 <body>
-<div class="container">
 
-  <header class="hero">
-    <span class="pill">Agent Skills 101 · Training Portal</span>
-    <h1>Agent Skills — Technical Deep Dive</h1>
-    <p class="h1-th">Agent Skills — เจาะลึกเชิงเทคนิค</p>
-    <div class="lang-badges"><span>EN</span><span>ภาษาไทย</span></div>
-    <p class="subtitle">
-      A self-paced engineering training on the <a href="https://agentskills.io">Agent Skills</a> open standard — from <code>SKILL.md</code> anatomy and progressive disclosure to authoring, evaluation, and cross-client deployment.
-    </p>
-    <p class="subtitle" style="margin-top:8px">
-      หลักสูตร Self-Paced สำหรับวิศวกร เรื่องมาตรฐานเปิด <a href="https://agentskills.io">Agent Skills</a> — ตั้งแต่โครงสร้าง <code>SKILL.md</code> และ Progressive Disclosure ไปจนถึงการเขียน, ทดสอบ, และนำไปใช้ข้าม client
-    </p>
-  </header>
+<!-- ============= NAV ============= -->
+<nav class="top">
+  <div class="inner">
+    <div class="brand">Agent Skills <span class="dot">·</span> 101</div>
+    <div class="links">
+      <a href="#why" class="hide-sm">Why</a>
+      <a href="#what" class="hide-sm">What you'll learn</a>
+      <a href="#start">Start</a>
+      <a href="#ecosystem" class="hide-sm">Ecosystem</a>
+      <a href="course-en.html" class="cta">Begin →</a>
+    </div>
+  </div>
+</nav>
 
-  <div class="section-label">Self-paced course · หลักสูตรอ่านเอง</div>
-  <div class="grid grid-2">
-    <a class="card" href="course-en.html">
-      <span class="lang-tag">EN</span>
-      <h3>Read the course (English)</h3>
-      <p class="h3-th">เนื้อหาหลักสูตรเป็นภาษาอังกฤษ</p>
-      <p>10 modules with code samples, labs, and a citation-backed cheatsheet. ~45-minute read.</p>
-      <div class="arrow">Open course →</div>
+<!-- ============= HERO ============= -->
+<section class="hero">
+  <div class="badge"><span class="dot"></span> Open standard · agentskills.io</div>
+  <p class="h1-th">Agent Skills เจาะลึกเชิงเทคนิค · บทเรียนสองภาษา</p>
+  <h1>Master the open standard<br>for <span class="accent">AI agent capabilities</span></h1>
+  <p class="lede">
+    A self-paced engineering training on <strong>Agent Skills</strong> — the open format that lets one
+    <code>SKILL.md</code> teach Claude, Copilot, Cursor, Codex, and 30+ other agents the same procedural
+    knowledge. From frontmatter anatomy to evaluation-driven authoring and team rollout.
+  </p>
+  <div class="ctas">
+    <a class="btn primary" href="course-en.html">Start course (EN) <span class="arrow">→</span></a>
+    <a class="btn ghost" href="course-th.html">เริ่มหลักสูตร (TH)</a>
+    <a class="btn ghost" href="slides/training-en.html">View slides</a>
+  </div>
+  <div class="meta-row">
+    <span><span class="ok">●</span> 12 modules</span>
+    <span><span class="ok">●</span> ~45 min self-paced</span>
+    <span><span class="ok">●</span> EN + ภาษาไทย</span>
+    <span><span class="ok">●</span> Citation-backed</span>
+  </div>
+</section>
+
+<!-- ============= STATS ============= -->
+<div class="stats">
+  <div class="stat"><div class="num">12</div><div class="label">Modules</div></div>
+  <div class="stat"><div class="num">38+</div><div class="label">Adopting clients</div></div>
+  <div class="stat"><div class="num">17</div><div class="label">Cited wiki pages</div></div>
+  <div class="stat"><div class="num">2</div><div class="label">Languages (EN/TH)</div></div>
+</div>
+
+<!-- ============= WHY ============= -->
+<section class="block" id="why">
+  <span class="section-label">Why this matters</span>
+  <h2 class="section-title">Stop pasting the same instructions every session</h2>
+  <p class="section-th">เลิกพิมพ์คำสั่งซ้ำๆ ทุก session</p>
+
+  <div class="why">
+    <div class="col before">
+      <h3><span class="icon">⌧</span> Without Skills</h3>
+      <ul>
+        <li>Re-pasting the same instructions every session</li>
+        <li>CLAUDE.md grows from facts into procedures</li>
+        <li>Custom agents per use case → fragmentation</li>
+        <li>Each engineer builds the same context from scratch</li>
+        <li>Knowledge dies when teammates leave</li>
+      </ul>
+    </div>
+    <div class="col after">
+      <h3><span class="icon">✓</span> With Skills</h3>
+      <ul>
+        <li>Procedural knowledge captured once, in version control</li>
+        <li>Loaded only when relevant — no context bloat</li>
+        <li>Composable across teams, surfaces, organisations</li>
+        <li>One <code>SKILL.md</code> works in 38+ agent products</li>
+        <li>Like an onboarding guide for every new agent session</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============= WHAT YOU WILL LEARN ============= -->
+<section class="block" id="what">
+  <span class="section-label">What you'll learn</span>
+  <h2 class="section-title">From "what is a skill" to shipping production-grade authoring</h2>
+  <p class="section-th">ตั้งแต่ "Skill คืออะไร" ไปจนถึงการสร้าง Skill คุณภาพระดับ production</p>
+
+  <div class="features">
+    <div class="feature">
+      <div class="ico">📐</div>
+      <h3>SKILL.md anatomy</h3>
+      <p>The exact frontmatter contract — required fields, validation rules, optional fields, and Claude Code-specific extras.</p>
+    </div>
+    <div class="feature">
+      <div class="ico">🪜</div>
+      <h3>Progressive disclosure</h3>
+      <p>The 3-tier loading model that lets you install dozens of skills without burning your context window.</p>
+    </div>
+    <div class="feature">
+      <div class="ico">🌐</div>
+      <h3>Cross-client portability</h3>
+      <p>The <code>.agents/skills/</code> convention and the 38+ tools that adopt it — write once, run everywhere.</p>
+    </div>
+    <div class="feature">
+      <div class="ico">🧭</div>
+      <h3>Skills vs MCP vs Subagents</h3>
+      <p>The decision framework. When to teach (skill), connect (MCP), or delegate (subagent) — and how to compose them.</p>
+    </div>
+    <div class="feature">
+      <div class="ico">🎯</div>
+      <h3>Description optimization</h3>
+      <p>Train/validation eval methodology. The single most important quality dial in any skill, treated like an ML model.</p>
+    </div>
+    <div class="feature">
+      <div class="ico">🛡️</div>
+      <h3>Security &amp; rollout</h3>
+      <p>Threat model, mitigations, and a 7-step team rollout playbook that's survived contact with reality.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============= CODE PREVIEW ============= -->
+<section class="block">
+  <div class="code-preview">
+    <div class="text">
+      <span class="section-label">The contract</span>
+      <h3>One file. Two required fields. Infinite portability.</h3>
+      <p>
+        Every Agent Skill is a folder with a <code>SKILL.md</code> at its root.
+        YAML frontmatter on top, markdown instructions below, optional sibling
+        scripts and references that load only when needed.
+      </p>
+      <p>
+        The standard is intentionally minimal — master the required fields and
+        the cross-client convention, then add platform-specific extras only when
+        they earn it.
+      </p>
+      <a class="btn ghost" style="margin-top: 8px;" href="course-en.html#m3">Read module 03 →</a>
+    </div>
+    <div class="code">
+      <div class="code-head">
+        <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+        <span>~/.agents/skills/pdf-processing/SKILL.md</span>
+      </div>
+<pre><span class="c">---</span>
+<span class="k">name</span>: pdf-processing
+<span class="k">description</span>: <span class="s">Extract text and tables from PDF
+  files, fill forms, merge documents.
+  Use when working with PDF files or
+  when the user mentions PDFs, forms,
+  or document extraction.</span>
+<span class="k">license</span>: Apache-2.0
+<span class="c">---</span>
+
+<span class="c"># PDF Processing</span>
+
+Use pdfplumber for text extraction:
+
+```python
+import pdfplumber
+with pdfplumber.open("file.pdf") as pdf:
+    text = pdf.pages[0].extract_text()
+```
+
+For form filling, see [FORMS.md](FORMS.md).</pre>
+    </div>
+  </div>
+</section>
+
+<!-- ============= HOW IT WORKS (Progressive disclosure visual) ============= -->
+<section class="block">
+  <span class="section-label">How it scales</span>
+  <h2 class="section-title">Install hundreds of skills. Pay for the ones you actually use.</h2>
+  <p class="section-th">ติดตั้ง Skill ได้เป็นร้อยตัว · จ่าย token เฉพาะที่ใช้จริง</p>
+
+  <div class="how">
+    <p style="margin: 0; color: var(--muted);">Progressive disclosure loads skills in three tiers — agents see metadata at startup, instructions on activation, and bundled resources only on demand.</p>
+    <div class="how-grid">
+      <div class="how-step">
+        <div class="lvl">Tier 1 · Always</div>
+        <h4>Metadata</h4>
+        <p><code>name</code> + <code>description</code> from every installed skill — preloaded into the system prompt at session start.</p>
+        <span class="cost">~100 tokens / skill</span>
+      </div>
+      <div class="how-step">
+        <div class="lvl">Tier 2 · On match</div>
+        <h4>Instructions</h4>
+        <p>Full SKILL.md body loads when the agent decides the skill is relevant to the current task.</p>
+        <span class="cost">&lt; 5,000 tokens</span>
+      </div>
+      <div class="how-step">
+        <div class="lvl">Tier 3 · On demand</div>
+        <h4>Resources</h4>
+        <p>Bundled <code>scripts/</code>, <code>references/</code>, <code>assets/</code> read only when the instructions need them.</p>
+        <span class="cost">~unbounded</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============= START ============= -->
+<section class="block" id="start">
+  <span class="section-label">Get started</span>
+  <h2 class="section-title">Pick your format</h2>
+  <p class="section-th">เลือกฟอร์แมตที่เหมาะกับคุณ</p>
+
+  <div class="start-grid">
+    <a class="start-card" href="course-en.html">
+      <span class="lang">EN · 45 min</span>
+      <h3>Self-paced course (English)</h3>
+      <p class="h3-sub">12-module long-form with code samples and labs</p>
+      <p>Read at your own pace. Sticky-sidebar TOC, citation-backed claims, "Try it" labs.</p>
+      <div class="arrow">Start reading →</div>
     </a>
-    <a class="card" href="course-th.html">
-      <span class="lang-tag alt">TH</span>
-      <h3>อ่านหลักสูตร (ภาษาไทย)</h3>
-      <p class="h3-th">Thai-language version of the course</p>
-      <p>10 บท พร้อมตัวอย่างโค้ด, แบบฝึกหัด, และ Cheatsheet อ้างอิงครบ ใช้เวลาอ่านประมาณ 45 นาที</p>
-      <div class="arrow">เปิดหลักสูตร →</div>
+    <a class="start-card" href="course-th.html">
+      <span class="lang alt">TH · 45 นาที</span>
+      <h3>หลักสูตรอ่านเอง (ภาษาไทย)</h3>
+      <p class="h3-sub">12 บทเรียน พร้อมตัวอย่างโค้ดและ Lab</p>
+      <p>อ่านได้ตามจังหวะของคุณเอง · TOC ติดด้านข้าง · มี citation ครบ · มี Lab ให้ลองทำ</p>
+      <div class="arrow">เริ่มอ่าน →</div>
     </a>
   </div>
 
-  <div class="section-label">Slide decks · สำหรับสอนหน้าห้อง</div>
-  <div class="grid grid-2">
-    <a class="card" href="slides/training-en.html">
-      <span class="lang-tag">EN</span>
-      <h3>Slide deck — instructor-led</h3>
-      <p class="h3-th">สไลด์สำหรับวิทยากร (อังกฤษ)</p>
-      <p>~35 reveal.js slides covering the same material. Use for 60-90 minute live sessions.</p>
+  <div class="start-grid three">
+    <a class="start-card" href="slides/training-en.html">
+      <span class="lang">EN deck</span>
+      <h3>Slides — instructor-led (EN)</h3>
+      <p>~35 reveal.js slides for 60-90 min live sessions.</p>
       <div class="arrow">Open slides →</div>
     </a>
-    <a class="card" href="slides/training-th.html">
-      <span class="lang-tag alt">TH</span>
-      <h3>สไลด์ — สำหรับวิทยากร</h3>
-      <p class="h3-th">Slide deck for live training (Thai)</p>
-      <p>สไลด์ reveal.js ~35 หน้า ครอบคลุมเนื้อหาเดียวกัน ใช้สำหรับสอนสด 60-90 นาที</p>
+    <a class="start-card" href="slides/training-th.html">
+      <span class="lang alt">TH deck</span>
+      <h3>สไลด์สำหรับสอน (TH)</h3>
+      <p>สไลด์ ~35 หน้า สำหรับสอนสด 60-90 นาที</p>
       <div class="arrow">เปิดสไลด์ →</div>
     </a>
-  </div>
-
-  <div class="section-label">Reference material · เอกสารอ้างอิง</div>
-  <div class="grid grid-3">
-    <a class="card" href="wiki-index.md">
+    <a class="start-card" href="wiki-index.md">
+      <span class="lang">Wiki</span>
       <h3>Internal wiki</h3>
-      <p class="h3-th">Wiki ภายใน</p>
-      <p>17 pages, cited claims, knowledge graph. Source of truth for this training.</p>
+      <p>17 cited pages, knowledge graph, primary sources. Source of truth.</p>
       <div class="arrow">Browse wiki →</div>
     </a>
-    <a class="card" href="https://agentskills.io">
-      <h3>agentskills.io</h3>
-      <p class="h3-th">มาตรฐานเปิด</p>
-      <p>The open standard's home — specification, quickstart, client showcase.</p>
-      <div class="arrow">Visit site →</div>
-    </a>
-    <a class="card" href="https://github.com/agentskills/agentskills">
-      <h3>Reference SDK</h3>
-      <p class="h3-th">Reference SDK</p>
-      <p><code>skills-ref</code> — validator and parser. Drop into CI to enforce naming and frontmatter rules.</p>
-      <div class="arrow">View on GitHub →</div>
-    </a>
   </div>
+</section>
 
-  <div class="kicker">
-    <h2>Who this is for</h2>
-    <p class="h2-th">เหมาะกับใคร</p>
-    <ul>
-      <li>Engineers who write tools or applications on top of Claude, Copilot, Cursor, Codex, or similar agents.</li>
-      <li>Tech leads rolling out AI workflows for a team and tired of pasting the same instructions into every session.</li>
-      <li>Anyone deciding between Skills, MCP, Subagents, and Projects and wanting a clean mental model.</li>
-      <li class="muted-li">วิศวกรที่กำลังสร้าง tool / application บน Claude, Copilot, Cursor, Codex หรือ agent อื่น ๆ</li>
-      <li class="muted-li">Tech Lead ที่ต้องการ rollout AI workflow ให้ทั้งทีม โดยไม่ต้องคอยพิมพ์คำสั่งซ้ำ ๆ</li>
-      <li class="muted-li">ใครก็ตามที่กำลังเลือกระหว่าง Skill, MCP, Subagent, Project — และอยากได้กรอบความคิดที่ชัดเจน</li>
-    </ul>
+<!-- ============= ECOSYSTEM ============= -->
+<section class="block" id="ecosystem">
+  <span class="section-label">Open ecosystem</span>
+  <h2 class="section-title">One <code>SKILL.md</code> works across <span style="color:var(--accent)">38+</span> agents</h2>
+  <p class="section-th">ไฟล์ <code>SKILL.md</code> หนึ่งไฟล์ · ใช้ได้กับ agent กว่า 38 ตัว</p>
+
+  <div class="eco-wrap">
+    <h3>Released by Anthropic. Adopted by everyone.</h3>
+    <p class="sub">
+      The format originated at Anthropic and was released as an open standard at <a href="https://agentskills.io">agentskills.io</a>.
+      <span class="count">~38 client products</span> have adopted it as of May 2026 — and the list keeps growing.
+    </p>
+    <div class="eco-pills">
+      <span class="eco-pill featured">Claude Code</span>
+      <span class="eco-pill featured">Claude.ai</span>
+      <span class="eco-pill featured">GitHub Copilot</span>
+      <span class="eco-pill featured">VS Code</span>
+      <span class="eco-pill featured">OpenAI Codex</span>
+      <span class="eco-pill featured">Cursor</span>
+      <span class="eco-pill featured">Gemini CLI</span>
+      <span class="eco-pill">OpenCode</span>
+      <span class="eco-pill">OpenHands</span>
+      <span class="eco-pill">Goose</span>
+      <span class="eco-pill">Letta</span>
+      <span class="eco-pill">Roo Code</span>
+      <span class="eco-pill">Mistral Vibe</span>
+      <span class="eco-pill">Snowflake Cortex Code</span>
+      <span class="eco-pill">Databricks Genie</span>
+      <span class="eco-pill">Spring AI</span>
+      <span class="eco-pill">Laravel Boost</span>
+      <span class="eco-pill">Kiro</span>
+      <span class="eco-pill">Factory</span>
+      <span class="eco-pill">Junie (JetBrains)</span>
+      <span class="eco-pill">Amp</span>
+      <span class="eco-pill">Mux</span>
+      <span class="eco-pill">Ona</span>
+      <span class="eco-pill">Workshop</span>
+      <span class="eco-pill">Trae</span>
+      <span class="eco-pill">Piebald</span>
+      <span class="eco-pill">Pi</span>
+      <span class="eco-pill">Emdash</span>
+      <span class="eco-pill">Qodo</span>
+      <span class="eco-pill">VT Code</span>
+      <span class="eco-pill">Command Code</span>
+      <span class="eco-pill">Agentman</span>
+      <span class="eco-pill">Firebender</span>
+      <span class="eco-pill">nanobot</span>
+      <span class="eco-pill">fast-agent</span>
+      <span class="eco-pill">Autohand</span>
+      <span class="eco-pill">+ more</span>
+    </div>
   </div>
+</section>
 
-  <footer>
-    <p>agentskill-101 · Built 2026-05-08 · All claims cited under <code>/wiki/</code></p>
-  </footer>
+<!-- ============= FINAL CTA ============= -->
+<section class="final-cta">
+  <h2>Ready to dive in?</h2>
+  <p>~45 minutes self-paced · No setup, no signup · Open in your browser</p>
+  <div class="ctas">
+    <a class="btn primary" href="course-en.html">Begin in English →</a>
+    <a class="btn ghost" href="course-th.html">เริ่มภาษาไทย</a>
+  </div>
+</section>
 
-</div>
+<!-- ============= FOOTER ============= -->
+<footer>
+  <div class="links">
+    <a href="course-en.html">Course (EN)</a>
+    <a href="course-th.html">Course (TH)</a>
+    <a href="slides/training-en.html">Slides (EN)</a>
+    <a href="slides/training-th.html">Slides (TH)</a>
+    <a href="wiki-index.md">Wiki</a>
+    <a href="https://agentskills.io">agentskills.io ↗</a>
+    <a href="https://github.com/supachai-j/agent-skills-training">GitHub ↗</a>
+  </div>
+  <div class="built">agentskill-101 · Built 2026-05-08</div>
+</footer>
+
 </body>
 </html>
