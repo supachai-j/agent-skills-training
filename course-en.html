@@ -4,20 +4,50 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Agent Skills 101 — Self-paced Course (EN)</title>
+<meta name="theme-color" content="#0f1116" media="(prefers-color-scheme: dark)" />
+<meta name="theme-color" content="#fafbfc" media="(prefers-color-scheme: light)" />
+<script>
+  (function() {
+    try {
+      var stored = localStorage.getItem('theme');
+      var theme = stored || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+      document.documentElement.dataset.theme = theme;
+    } catch (e) { document.documentElement.dataset.theme = 'dark'; }
+  })();
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
 <style>
-  :root {
+  :root, [data-theme="dark"] {
     --bg: #0f1116;
     --panel: #181b22;
     --panel-2: #1f242d;
     --accent: #d97757;
     --accent-2: #5d8aa8;
+    --accent-3: #6dba88;
     --muted: #8a93a3;
     --text: #e8ecf2;
     --border: rgba(255,255,255,0.08);
     --code-bg: #11141a;
+    --code-text: #d8e0eb;
+    --soft-1: rgba(255,255,255,0.04);
+    --soft-2: rgba(255,255,255,0.08);
+  }
+  [data-theme="light"] {
+    --bg: #fafbfc;
+    --panel: #ffffff;
+    --panel-2: #f4f6fa;
+    --accent: #c95a30;
+    --accent-2: #2f6494;
+    --accent-3: #3e8e5e;
+    --muted: #58607a;
+    --text: #1a1d27;
+    --border: rgba(0,0,0,0.10);
+    --code-bg: #f4f6fa;
+    --code-text: #1a1d27;
+    --soft-1: rgba(0,0,0,0.03);
+    --soft-2: rgba(0,0,0,0.06);
   }
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; }
@@ -26,6 +56,7 @@
     background: var(--bg);
     color: var(--text);
     line-height: 1.65;
+    transition: background-color .25s ease, color .25s ease;
   }
   a { color: var(--accent); text-decoration: none; }
   a:hover { text-decoration: underline; }
@@ -41,7 +72,7 @@
     font-size: 0.85em;
     line-height: 1.55;
   }
-  pre code { background: none; padding: 0; font-size: inherit; color: #d8e0eb; }
+  pre code { background: none; padding: 0; font-size: inherit; color: var(--code-text); }
 
   /* Layout: sidebar + main */
   .layout { display: grid; grid-template-columns: 280px 1fr; max-width: 1280px; margin: 0 auto; gap: 0; }
@@ -76,6 +107,28 @@
   aside.toc ol li a:hover { background: var(--panel); text-decoration: none; }
   aside.toc .meta { font-size: 0.78em; color: var(--muted); margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border); }
   aside.toc .meta a { color: var(--accent); }
+  /* theme toggle in sidebar */
+  aside.toc .theme-row {
+    display: flex; align-items: center; gap: 10px;
+    margin-top: 14px; padding-top: 14px;
+    border-top: 1px solid var(--border);
+    font-size: 0.78em; color: var(--muted);
+  }
+  .theme-toggle {
+    background: var(--soft-1);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    width: 30px; height: 30px;
+    border-radius: 7px;
+    display: inline-grid; place-items: center;
+    cursor: pointer; padding: 0;
+    transition: background-color .15s, color .15s, border-color .15s;
+  }
+  .theme-toggle:hover { background: var(--soft-2); color: var(--text); }
+  .theme-toggle svg { width: 14px; height: 14px; display: block; }
+  .theme-toggle .icon-moon { display: none; }
+  [data-theme="light"] .theme-toggle .icon-sun { display: none; }
+  [data-theme="light"] .theme-toggle .icon-moon { display: block; }
 
   main {
     padding: 56px 56px 96px;
@@ -132,10 +185,10 @@
     margin: 24px 0;
   }
   .callout.takeaway { border-left-color: var(--accent); background: rgba(217,119,87,0.06); }
-  .callout.lab { border-left-color: #6dba88; background: rgba(109,186,136,0.06); }
+  .callout.lab { border-left-color: var(--accent-3); background: rgba(109,186,136,0.06); }
   .callout h4 { margin: 0 0 8px; color: var(--text); font-size: 0.95em; text-transform: uppercase; letter-spacing: 0.08em; }
   .callout.takeaway h4 { color: var(--accent); }
-  .callout.lab h4 { color: #6dba88; }
+  .callout.lab h4 { color: var(--accent-3); }
   .callout p { margin: 6px 0; }
 
   table {
@@ -195,6 +248,21 @@
     Slide deck: <a href="slides/training-en.html">EN</a> · <a href="slides/training-th.html">TH</a><br>
     Standard: <a href="https://agentskills.io">agentskills.io</a><br>
     Wiki: <a href="wiki-index.md">browse</a>
+  </div>
+  <div class="theme-row">
+    <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Toggle dark/light theme" title="Toggle theme">
+      <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="4"/>
+        <path d="M12 2v2"/><path d="M12 20v2"/>
+        <path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/>
+        <path d="M2 12h2"/><path d="M20 12h2"/>
+        <path d="m4.93 19.07 1.41-1.41"/><path d="m17.66 6.34 1.41-1.41"/>
+      </svg>
+      <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+      </svg>
+    </button>
+    <span>Theme</span>
   </div>
 </aside>
 
@@ -769,5 +837,27 @@ description: >
 
 </main>
 </div>
+
+<script>
+  (function() {
+    var btn = document.getElementById('theme-toggle');
+    if (!btn) return;
+    btn.addEventListener('click', function() {
+      var current = document.documentElement.dataset.theme || 'dark';
+      var next = current === 'light' ? 'dark' : 'light';
+      document.documentElement.dataset.theme = next;
+      try { localStorage.setItem('theme', next); } catch (e) {}
+      btn.setAttribute('aria-label', 'Switch to ' + (next === 'light' ? 'dark' : 'light') + ' theme');
+    });
+    var mq = window.matchMedia('(prefers-color-scheme: light)');
+    if (mq.addEventListener) {
+      mq.addEventListener('change', function(e) {
+        if (!localStorage.getItem('theme')) {
+          document.documentElement.dataset.theme = e.matches ? 'light' : 'dark';
+        }
+      });
+    }
+  })();
+</script>
 </body>
 </html>
