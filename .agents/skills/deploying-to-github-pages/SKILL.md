@@ -114,6 +114,39 @@ keep the cached 301. Tell users to **hard-refresh** (`Cmd+Shift+R` /
 Pages serves them fine over HTTP, but some CDN edges normalise URL-encoded
 colons differently. Test the live URL, not just `localhost`.
 
+### Absolute paths break on project pages
+
+A project page lives at `https://<user>.github.io/<repo>/`. An `href="/foo.html"`
+in your HTML resolves to `https://<user>.github.io/foo.html` — **outside your
+repo**, so you get a 404.
+
+The classic culprit is `404.html`, where authors instinctively write absolute
+links back to the home page:
+
+```html
+<!-- ❌ Breaks on project pages -->
+<a href="/">← Home</a>
+<a href="/course-en.html">Course</a>
+
+<!-- ✅ Use repo-prefixed absolute paths -->
+<a href="/<repo>/">← Home</a>
+<a href="/<repo>/course-en.html">Course</a>
+
+<!-- ✅ Or relative paths (works for entry-level pages, fragile from deep URLs) -->
+<a href="./">← Home</a>
+<a href="course-en.html">Course</a>
+```
+
+**Lint with**:
+
+```bash
+# Find absolute paths that don't include the repo slug
+grep -nE 'href="/[^/]' *.html
+```
+
+**User pages don't have this problem** — they live at `<user>.github.io/` so `/`
+is the right root.
+
 ### The `--source=.` shorthand
 
 Skips the manual `git remote add` + `git push -u origin main`. The

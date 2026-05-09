@@ -77,6 +77,7 @@ See [references/PATTERNS.md](references/PATTERNS.md) for the full set:
 - **Takeaway / quote** — `<p class="quote">` with border-left
 - **2-column grid** — `.grid2 { display: grid; grid-template-columns: 1fr 1fr; }`
 - **Q&A close** — `<section class="center">` mirroring title
+- **Speaker notes** — every slide should ship with `<aside class="notes">` for narration, accessibility, and instructor speaker-view. See [`narrating-course-slides`](../narrating-course-slides/SKILL.md).
 
 ## CSS that ships with the template
 
@@ -111,9 +112,11 @@ Before declaring the deck done:
 - [ ] Slide numbers visible (`slideNumber: 'c/t'`)
 - [ ] Highlight + notes plugins loaded
 - [ ] Title slide + agenda slide + Q&A close exist
+- [ ] Every slide has `<aside class="notes">` (≥30 words if narration is intended; can be brief or empty for live-only decks)
 
 ## Related skills
 
 - [`scaffolding-course-portal`](../scaffolding-course-portal/SKILL.md) — orchestrator that calls this skill in Phase 7
 - [`translating-to-thai-technical`](../translating-to-thai-technical/SKILL.md) — for the TH mirror
 - [`adding-theme-toggle`](../adding-theme-toggle/SKILL.md) — for the landing page that links the deck
+- [`narrating-course-slides`](../narrating-course-slides/SKILL.md) — adds TTS narration, transcript drawer, and live captions to a finished deck

@@ -84,7 +84,7 @@ Each phase has a "done when" criterion. Don't move on until met.
 - **P8 done when:** TH version mirrors EN structure exactly.
 - **P9 done when:** Light + dark modes both pass eye-test.
 - **P10 done when:** All entry-point URLs return HTTP 200.
-- **P11 done when:** ≥3 rounds of feedback incorporated AND every asset (course-en/th, slides-en/th, wiki) is reachable via at least one link from `index.html`.
+- **P11 done when:** ≥3 rounds of feedback incorporated AND every asset (course-en/th, slides-en/th, wiki) is reachable via at least one link from `index.html` AND `grep -nE 'href="/[^/]' *.html` returns nothing un-prefixed (project-pages absolute paths must include the repo slug — common 404 trap in `404.html`).
 - **P12 done when:** Hub Featured/Courses card live, blog post drafted.
 
 ## Common anti-patterns
@@ -134,12 +134,19 @@ that handles its mechanics. When you reach that phase, hand off:
 |---|---|---|
 | 4 | `/llm-wiki` | URL → raw → wiki pages with citations |
 | 7 | [`generating-reveal-deck`](../generating-reveal-deck/SKILL.md) | reveal.js HTML deck (canvas 1280×800, density rules) |
+| 7b (optional) | [`narrating-course-slides`](../narrating-course-slides/SKILL.md) | adds speaker notes + per-slide TTS audio + transcript drawer + live captions to a finished deck |
 | 8 | [`translating-to-thai-technical`](../translating-to-thai-technical/SKILL.md) | EN → TH mirror with code/term-en preservation |
 | 9 | [`adding-theme-toggle`](../adding-theme-toggle/SKILL.md) | dark/light toggle with FOUC prevention |
 | 10 | [`deploying-to-github-pages`](../deploying-to-github-pages/SKILL.md) | git → gh repo → Pages → smoke test |
 
+**Phase 7b (narration)** is optional — skip it for an instructor-led-only deck
+or if you don't need self-paced audio. Run it after Phase 7 (slides finalised in EN)
+and before or after Phase 8 (TH mirror); the narration skill handles bilingual
+audio if both decks have notes.
+
 The sub-skills also work independently — invoke them outside this pipeline
-when you only need one piece (e.g. adding theme toggle to an existing site).
+when you only need one piece (e.g. adding theme toggle to an existing site, or
+narrating an existing deck that wasn't built via this orchestrator).
 
 ## Detailed references
 

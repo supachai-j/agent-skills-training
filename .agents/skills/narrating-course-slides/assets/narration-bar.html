@@ -1,0 +1,190 @@
+<!--
+  Drop-in narration UI for a reveal.js slide deck.
+
+  Place this entire block just before </body>, AFTER your Reveal.initialize({...})
+  script tag. It adds:
+    - Audio control bar (bottom-right, fixed) with auto-advance + captions + transcript toggles
+    - Captions overlay (bottom of slide, sentence-synced to audio)
+    - Transcript drawer (slide-up panel, full notes for the current slide)
+
+  Configure:
+    1. Set LANG to "en" or "th" (or any code matching your audio/{LANG}/sNN.mp3 dir)
+    2. For Thai decks: change all references to font-family from "Inter" to
+       "Noto Sans Thai","Inter" — OR if your <style> already has body { font-family }
+       set globally, the bar will inherit. Adjust the .narration-bar font-family below.
+    3. Audio path is "../audio/${LANG}/sNN.mp3" assuming your deck lives at
+       slides/training-en.html and audio at audio/en/. Adjust the relative path
+       in loadAndPlay() if your layout differs.
+
+  Behavior:
+    - On reveal "ready" + "slidechanged": load matching MP3, autoplay (browsers
+      block autoplay until first user gesture; subsequent slides play freely)
+    - User pause is sticky: if user pauses mid-slide, auto-advance won't trigger
+      on audio end
+    - Three checkboxes are independent — any combination can be active
+    - When transcript drawer is open, reveal canvas shrinks to 65vh, narration
+      bar lifts to bottom: calc(35vh + 10px)
+    - Captions sync via sentence-level char-ratio across audio.duration
+-->
+
+<style>
+  .narration-bar { position: fixed; bottom: 10px; right: 10px; z-index: 1001;
+    display: flex; align-items: center; gap: 10px; padding: 6px 10px;
+    background: rgba(20,20,20,0.88); border-radius: 8px; backdrop-filter: blur(6px);
+    font-family: "Inter","Segoe UI",system-ui,sans-serif; font-size: 12px; color: #ddd;
+    transition: bottom 0.25s ease; }
+  /* For Thai decks, override above with: font-family: "Noto Sans Thai","Inter",sans-serif; */
+  .narration-bar audio { height: 28px; width: 240px; }
+  .narration-bar audio::-webkit-media-controls-panel { background: transparent; }
+  .narration-bar label { display: flex; align-items: center; gap: 4px; cursor: pointer; user-select: none; }
+  .narration-bar input[type="checkbox"] { accent-color: #d97757; }
+  body.transcript-open .narration-bar { bottom: calc(35vh + 10px); }
+
+  .transcript-drawer { position: fixed; left: 0; right: 0; bottom: 0;
+    height: 35vh; z-index: 1000;
+    background: rgba(15,15,15,0.97); color: #e8ecf2;
+    border-top: 2px solid #d97757;
+    padding: 22px 32px; overflow-y: auto;
+    font-family: "Inter","Segoe UI",system-ui,sans-serif;
+    font-size: 19px; line-height: 1.65;
+    transform: translateY(100%); transition: transform 0.25s ease; }
+  /* For Thai decks: font-family: "Noto Sans Thai","Inter"; line-height: 1.75; */
+  body.transcript-open .transcript-drawer { transform: translateY(0); }
+  .transcript-drawer .label { font-size: 11px; text-transform: uppercase;
+    letter-spacing: 0.12em; color: #888; margin-bottom: 8px; }
+  body.transcript-open .reveal-viewport,
+  body.transcript-open .reveal { height: 65vh !important; }
+
+  .captions { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
+    max-width: 78vw; z-index: 999; pointer-events: none;
+    background: rgba(0,0,0,0.86); color: #fff;
+    padding: 14px 24px; border-radius: 10px; text-align: center;
+    font-family: "Inter","Segoe UI",system-ui,sans-serif;
+    font-size: 22px; line-height: 1.4; font-weight: 500;
+    text-shadow: 0 2px 6px rgba(0,0,0,0.6);
+    opacity: 0; transition: opacity 0.2s ease, bottom 0.25s ease;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.4); }
+  /* For Thai decks: font-family: "Noto Sans Thai","Inter"; line-height: 1.55; */
+  body.captions-on .captions:not(:empty) { opacity: 1; }
+  body.transcript-open .captions { bottom: calc(35vh + 80px); }
+
+  @media print { .narration-bar, .transcript-drawer, .captions { display: none; } }
+</style>
+
+<div class="narration-bar">
+  <audio id="slide-audio" controls preload="metadata"></audio>
+  <label><input type="checkbox" id="auto-advance" checked /> auto-advance</label>
+  <label><input type="checkbox" id="show-captions" /> captions</label>
+  <label><input type="checkbox" id="show-transcript" /> transcript</label>
+</div>
+<div class="captions" id="captions" aria-live="polite"></div>
+<div class="transcript-drawer" id="transcript-drawer" aria-live="polite">
+  <div class="label">Transcript — current slide</div>
+  <div id="transcript-content"></div>
+</div>
+
+<script>
+(function () {
+  // === Configuration ===
+  var LANG = "en";  // change to "th" for Thai decks; matches audio/${LANG}/sNN.mp3 directory
+
+  // === Elements ===
+  var audio = document.getElementById("slide-audio");
+  var autoCb = document.getElementById("auto-advance");
+  var trCb = document.getElementById("show-transcript");
+  var capCb = document.getElementById("show-captions");
+  var trContent = document.getElementById("transcript-content");
+  var capBox = document.getElementById("captions");
+
+  // === State ===
+  var userPaused = false;
+  var timeline = [];  // [{text, start}, ...] sentences with estimated start times
+
+  function pad2(n) { return n < 10 ? "0" + n : "" + n; }
+
+  function slideNum() {
+    // Flat deck assumed: top-level <section>s only. For decks with vertical
+    // <section><section>...</section></section> stacks, adjust to use
+    // Reveal.getCurrentSlide() and a section-counting walker.
+    return Reveal.getIndices().h + 1;
+  }
+
+  function loadAndPlay() {
+    var n = slideNum();
+    var src = "../audio/" + LANG + "/s" + pad2(n) + ".mp3";
+    if (audio.src.indexOf(src) === -1) {
+      audio.src = src;
+      userPaused = false;
+      timeline = [];
+      capBox.textContent = "";
+      var p = audio.play();
+      if (p && p.catch) p.catch(function () { /* autoplay blocked until user gesture */ });
+    }
+  }
+
+  function getCurrentNote() {
+    return document.querySelector(".present aside.notes")
+        || document.querySelector(".reveal section.present aside.notes");
+  }
+
+  function updateTranscript() {
+    var note = getCurrentNote();
+    trContent.textContent = note ? note.textContent.trim() : "(no transcript for this slide)";
+    trContent.scrollTop = 0;
+  }
+
+  function buildTimeline() {
+    var note = getCurrentNote();
+    if (!note || !audio.duration || isNaN(audio.duration)) { timeline = []; return; }
+    var text = note.textContent.trim();
+    // Split on sentence terminators followed by whitespace.
+    // Works for EN and TH if your speaker notes use '.', '!', '?' deliberately
+    // as breath beats (recommended in the speaker-notes style guide).
+    var sentences = text.split(/(?<=[.!?])\s+/).map(function (s) { return s.trim(); }).filter(Boolean);
+    var totalChars = sentences.reduce(function (n, s) { return n + s.length; }, 0);
+    if (totalChars === 0) { timeline = []; return; }
+    var cum = 0;
+    timeline = sentences.map(function (s) {
+      var start = (cum / totalChars) * audio.duration;
+      cum += s.length;
+      return { text: s, start: start };
+    });
+  }
+
+  function updateCaption() {
+    if (!timeline.length) return;
+    var t = audio.currentTime, cur = timeline[0].text;
+    for (var i = timeline.length - 1; i >= 0; i--) {
+      if (t >= timeline[i].start) { cur = timeline[i].text; break; }
+    }
+    if (capBox.textContent !== cur) capBox.textContent = cur;
+  }
+
+  // === Audio events ===
+  audio.addEventListener("loadedmetadata", buildTimeline);
+  audio.addEventListener("timeupdate", updateCaption);
+  audio.addEventListener("pause", function () {
+    if (!audio.ended) userPaused = true;
+  });
+  audio.addEventListener("play", function () { userPaused = false; });
+  audio.addEventListener("ended", function () {
+    capBox.textContent = "";
+    if (autoCb.checked && !userPaused) Reveal.next();
+  });
+
+  // === Toggle events ===
+  trCb.addEventListener("change", function () {
+    document.body.classList.toggle("transcript-open", trCb.checked);
+    if (trCb.checked) updateTranscript();
+    setTimeout(function () { if (window.Reveal) Reveal.layout(); }, 60);
+  });
+  capCb.addEventListener("change", function () {
+    document.body.classList.toggle("captions-on", capCb.checked);
+    if (capCb.checked && !timeline.length) buildTimeline();
+  });
+
+  // === Reveal events ===
+  Reveal.on("ready", function () { loadAndPlay(); updateTranscript(); });
+  Reveal.on("slidechanged", function () { loadAndPlay(); updateTranscript(); });
+})();
+</script>

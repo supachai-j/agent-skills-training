@@ -126,3 +126,43 @@ Max 15 lines of code.
   <p class="muted">course-name · author</p>
 </section>
 ```
+
+## 9. Slide with speaker notes
+
+Every slide should ship with `<aside class="notes">` — even if you're never opening reveal.js's speaker-view window. Three reasons:
+
+1. **TTS narration** — the [`narrating-course-slides`](../../narrating-course-slides/SKILL.md) skill reads notes and synthesizes per-slide audio.
+2. **Live captions / transcripts** — accessibility overlays pull text from `aside.notes`.
+3. **Speaker view** — instructors press `S` to open the notes window during live delivery.
+
+Add notes as the **last child of every `<section>`**, just before the closing tag:
+
+```html
+<section>
+  <h2>What is Oracle?</h2>
+  <p class="big">Oracle is an external brain that humans and many agents use together.</p>
+  <ul>
+    <li>Not a single bot</li>
+    <li>Not just a database</li>
+    <li>Not just a web page</li>
+  </ul>
+
+  <aside class="notes">
+    Okay, here's the one sentence I want you to hold onto. Oracle is an
+    external brain that humans and many agents use together. That's it.
+    Not one chatbot. Not just a database. Not just a web page. Hold that
+    picture — everything else hangs off of it.
+  </aside>
+</section>
+```
+
+### Style rules for notes (when narration is intended)
+
+- **Conversational, not lecture-ish** — "Okay, here's the trick…" not "In this slide we will examine…"
+- **30-90 words per slide** — TTS at ~150 wpm gives ~12-35 sec audio
+- **No parens, no markdown, no special chars** — they confuse TTS engines
+- **Spell out symbols and abbreviations** — `ψ` → "psi", `MCP` → "M-C-P", `/awaken` → "slash awaken"
+- **Short sentences mixed with longer ones** — single-word sentences create breath beats: "Ever." "Yeah."
+- **Periods as breath beats** — TTS engines pause naturally on `.`. Use them deliberately.
+
+See `narrating-course-slides/references/SPEAKER-NOTES-STYLE.md` for the full style guide.
