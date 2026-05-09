@@ -210,13 +210,36 @@ done
 
 | Test | How |
 |---|---|
+| **Asset coverage** (the one we missed first time) | For each asset (course-en, course-th, slides-en, slides-th, wiki) — grep `index.html` for at least one link. If any asset is reachable only via footer or only in one language, hero/start-section is incomplete. |
 | Internal links | `grep -oE 'href="[^"]+"' *.html` then curl each |
 | Mobile responsive | DevTools 375px width |
 | Theme toggle | Click sun/moon, scroll every section |
 | Reading flow | Hand to one peer + one junior, observe friction |
 | Citations | Spot-check 5 quotes against wiki/raw |
 
-**Done when:** ≥3 rounds of feedback incorporated.
+### Quick asset-coverage check
+
+```bash
+# Run from the course repo root
+echo "Hero CTAs (visible above the fold):"
+sed -n '/class="ctas"/,/<\/div>/p' index.html | grep -oE 'href="[^"]+"' | sort -u
+
+echo
+echo "Start-section cards:"
+sed -n '/id="start"/,/<\/section>/p' index.html | grep -oE 'href="[^"]+"' | sort -u
+
+echo
+echo "All assets that should be reachable from index:"
+echo "  course-en.html  course-th.html"
+echo "  slides/training-en.html  slides/training-th.html"
+echo "  wiki-index.md"
+
+# If any asset is missing from the hero AND start-section, fix before deploy.
+```
+
+**Why this check exists:** in the first pass of building a course portal, the index.html had `Pillars of this training` and `Pick your format` filled out — but the start-section only listed the 2 course pages, and the hero CTA had a single `View slides` button (EN-only). Result: a TH reader landing on the page never saw the TH slides existed unless they scrolled to the footer. Footer != entry point.
+
+**Done when:** ≥3 rounds of feedback incorporated AND every asset reachable from index above-the-fold (hero or start-section, not just footer).
 
 ---
 

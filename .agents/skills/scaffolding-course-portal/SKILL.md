@@ -84,7 +84,7 @@ Each phase has a "done when" criterion. Don't move on until met.
 - **P8 done when:** TH version mirrors EN structure exactly.
 - **P9 done when:** Light + dark modes both pass eye-test.
 - **P10 done when:** All entry-point URLs return HTTP 200.
-- **P11 done when:** ≥3 rounds of feedback incorporated.
+- **P11 done when:** ≥3 rounds of feedback incorporated AND every asset (course-en/th, slides-en/th, wiki) is reachable via at least one link from `index.html`.
 - **P12 done when:** Hub Featured/Courses card live, blog post drafted.
 
 ## Common anti-patterns
