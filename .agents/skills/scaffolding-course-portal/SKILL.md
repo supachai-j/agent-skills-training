@@ -80,8 +80,8 @@ Each phase has a "done when" criterion. Don't move on until met.
 - **P4 done when:** Every wiki claim has `[src: raw/...]` and confidence.
 - **P5 done when:** Every module in outline maps to ≥1 wiki page.
 - **P6 done when:** All anchors resolve, all wiki citations valid.
-- **P7 done when:** No slide overflows the 1280×800 canvas.
-- **P8 done when:** TH version mirrors EN structure exactly.
+- **P7 done when:** No slide overflows the 1280×800 canvas. If Phase 7b (narration) is planned, every `<section>` also has an `<aside class="notes">` of ≥30 words in the natural conversational style (see `narrating-course-slides` SPEAKER-NOTES-STYLE.md).
+- **P8 done when:** TH version mirrors EN structure exactly. If notes exist in EN, TH `<aside class="notes">` count must equal EN count, with canonical Thai used for any quoted source material.
 - **P9 done when:** Light + dark modes both pass eye-test.
 - **P10 done when:** All entry-point URLs return HTTP 200.
 - **P11 done when:** ≥3 rounds of feedback incorporated AND every asset (course-en/th, slides-en/th, wiki) is reachable via at least one link from `index.html` AND `grep -nE 'href="/[^/]' *.html` returns nothing un-prefixed (project-pages absolute paths must include the repo slug — common 404 trap in `404.html`).
@@ -140,9 +140,18 @@ that handles its mechanics. When you reach that phase, hand off:
 | 10 | [`deploying-to-github-pages`](../deploying-to-github-pages/SKILL.md) | git → gh repo → Pages → smoke test |
 
 **Phase 7b (narration)** is optional — skip it for an instructor-led-only deck
-or if you don't need self-paced audio. Run it after Phase 7 (slides finalised in EN)
-and before or after Phase 8 (TH mirror); the narration skill handles bilingual
-audio if both decks have notes.
+or if you don't need self-paced audio.
+
+**For EN-only decks**: run after Phase 7 (slides finalised). Generates audio
+once for the EN deck.
+
+**For bilingual decks**: run *after Phase 8* (TH mirror), not before. Phase 8
+needs to mirror the speaker notes too — once both decks have notes,
+narrating-course-slides generates audio for both languages in one pass. If
+you run 7b before 8, the TH deck won't have audio until you re-run.
+
+**The order summary**: Phase 7 (EN slides + notes) → Phase 8 (TH mirror,
+including notes) → Phase 7b (narrate both).
 
 The sub-skills also work independently — invoke them outside this pipeline
 when you only need one piece (e.g. adding theme toggle to an existing site, or

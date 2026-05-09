@@ -172,6 +172,70 @@ Add `.term-en` styling so English terms in Thai prose stand out subtly:
 .term-en { color: var(--muted); font-style: italic; font-size: 0.85em; }
 ```
 
+## Mirroring speaker notes (`<aside class="notes">`)
+
+If the EN deck has speaker notes for narration (typical when the
+[`narrating-course-slides`](../narrating-course-slides/SKILL.md) skill will
+run later), **mirror the notes to TH too**. Without TH notes, you can only
+generate EN audio — the TH deck stays silent.
+
+### Rules for note translation
+
+1. **Don't word-for-word translate.** Notes are spoken script, not document
+   text. Match the *intent* and *delivery* — Thai compresses ideas, so word
+   count typically drops 30-40%.
+
+2. **Use canonical Thai for quoted source material.** When a note quotes a
+   principle, definition, or maxim that exists verbatim in your raw Thai
+   source (e.g. `raw/<source>.md` from a course portal scaffold), lift the
+   canonical phrasing directly. Don't double-translate Thai → English (in
+   slide visible content) → Thai (in notes).
+
+3. **Preserve TTS hygiene from the EN style guide:**
+   - No parens, markdown, or special characters
+   - Spell out symbols and abbreviations: `ψ` → "psi", `MCP` → "M-C-P",
+     `/awaken` → "slash awaken" (or just say "awaken" in context)
+   - Periods as breath beats — TTS engines pause naturally on `.`
+
+4. **Particle warmth, used sparingly.** Thai particles like "นะ", "ครับ",
+   "ค่ะ", "ล่ะ" add warmth to spoken delivery — but if used on every line
+   the result feels affected. 1-2 per slide max.
+
+5. **Match conversational openers.** EN openers like "Hey,", "Alright,",
+   "So," map to Thai "เฮ้", "เอ้า", "OK งั้น", "ทีนี้นะ", "ลองคิดดู". Vary
+   them so the deck doesn't sound like every slide opens the same way.
+
+### Example
+
+**EN note** (from a slide on Principle 1):
+
+> "Of all six rules, this is the one. If you only remember one, make it
+> this. Nothing gets deleted. Ever. Got something wrong? You don't reach
+> for delete — you append the correction."
+
+**Bad TH** (literal translation, awkward):
+
+> "จากกฎทั้งหกข้อ ข้อนี้คือข้อนั้น ถ้าคุณจะจดจำเพียงข้อเดียวเท่านั้น
+> จงทำให้ข้อนี้เป็นข้อนั้น ไม่มีสิ่งใดถูกลบทิ้ง..."
+
+**Good TH** (canonical Thai from raw source + conversational frame):
+
+> "ในหกหลักทั้งหมด ข้อนี้แหละคือตัวจริง. ถ้าจำได้แค่ข้อเดียว ขอให้เป็นข้อนี้.
+> Nothing is Deleted. ลบไม่ได้ ห้ามลบ. ถ้าผิด เราจะ append คำแก้ไขลงไปข้าง ๆ
+> ของเก่า ไม่ลบทิ้ง."
+
+Notice: kept "Nothing is Deleted" and "append" in English (canonical terms),
+used "ลบไม่ได้ ห้ามลบ" as a single-word-style breath beat for emphasis,
+matched the rhythm of the EN ("Ever." → "ลบไม่ได้").
+
+### Done check (when notes are part of the mirror)
+
+- [ ] TH `<aside class="notes">` count equals EN count
+- [ ] Each TH note feels like a Thai teacher *talking*, not a translation
+- [ ] Quoted material uses canonical Thai (no double-translation)
+- [ ] Same English tokens left in English in both decks (`Oracle`, `MCP`,
+      `psi`, `/awaken`, etc.)
+
 ## Markdown content (READMEs, blog posts)
 
 Markdown doesn't have inline classes by default, but you can:

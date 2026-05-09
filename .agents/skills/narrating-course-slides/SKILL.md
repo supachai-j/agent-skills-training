@@ -102,6 +102,57 @@ M10 (capstone/coach)     → male motivating (Charon)
 Closing/Q&A              → female warm  (Aoede)
 ```
 
+### Adapting voice rotation to your deck
+
+The default `VOICE_MAP` in `scripts/generate-{edge,gemini}-tts.py` assumes
+the canonical 10-module shape above with these slide-index ranges:
+
+| Slides | Block | Voice (Gemini default) |
+|---|---|---|
+| 1-3 | intro/agenda/why | Aoede (F) |
+| 4-7 | M1 | Kore (F) |
+| 8-14 | M2 (principles, 7 slides) | Charon (M) |
+| 15-17 | M3 | Aoede (F) |
+| 18-20 | M4 | Puck (M) |
+| 21-23 | M5 | Kore (F) |
+| 24-26 | M6 | Charon (M) |
+| 27-29 | M7 | Aoede (F) |
+| 30-32 | M8 | Puck (M) |
+| 33-35 | M9 | Kore (F) |
+| 36-38 | M10 | Charon (M) |
+| 39+ | closing/QA | Aoede (F) |
+
+If your deck has a different shape (8 modules, 12 modules, irregular slide
+counts per module), edit the `assign(start, end, voice)` calls at the top
+of the generator script before running.
+
+**Quick recipe** to derive your own ranges:
+
+1. Open the deck. Count `<section>` per module by reading the comments
+   (e.g. `<!-- M1 -->`, `<!-- M2 -->`).
+2. Build a slide-index → module table: e.g. `M1 = 4-6`, `M2 = 7-12`, etc.
+3. Decide F/M alternation per module — keep contrast strong on consecutive
+   blocks.
+4. Translate to `assign()` calls in the script.
+
+Or use [`generate-voice-map.py`](scripts/) (if present) which parses the
+`<!-- module markers -->` and proposes ranges automatically.
+
+### Style prompt rules of thumb (when adapting)
+
+When you add a new module type not in the canonical 10, pick a style by
+function:
+
+| Module function | Style prompt |
+|---|---|
+| Welcome / wrap | "warmly, like welcoming/closing a class" |
+| Definitional | "with curiosity, building understanding step by step" |
+| Principle / canonical claim | "with conviction. Slow on the key claim." |
+| Hands-on lab | "step-by-step, energetic, practical" |
+| Architecture tour | "like a tour-guide walking through a diagram" |
+| Cautionary / governance | "measured, balancing excitement with caution" |
+| Capstone / send-off | "motivating, like a coach before the final challenge" |
+
 ### Style prompts (Gemini only)
 
 Per module, prepend a style instruction to the speaker note. Example
